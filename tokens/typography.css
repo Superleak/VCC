@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+
+  /* ── Familias ─────────────────────────────────────────────── */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:    'Hanken Grotesk', system-ui, sans-serif;
+
+  /* ── Escala de tamaños (slide 1080×1350) ──────────────────── */
+  --text-display:       116px;  /* título de portada */
+  --text-h1:             84px;  /* heading principal */
+  --text-h2:             80px;  /* heading secundario */
+  --text-quote-lg:       76px;  /* cita grande */
+  --text-quote-md:       60px;  /* cita mediana (cierre) */
+  --text-quote-sm:       56px;  /* cita pequeña / prompt */
+  --text-body-lg:        48px;  /* body largo */
+  --text-body-md:        46px;  /* body estándar */
+  --text-list:           46px;  /* ítems de lista */
+  --text-attribution:    24px;  /* "— Epicteto, Enquiridión" */
+  --text-handle:         22px;  /* @Stoa.Hoy */
+  --text-kicker:         22px;  /* ESTOICISMO · EPICTETO */
+  --text-number:         20px;  /* 01 / 08 */
+
+  /* ── Pesos ───────────────────────────────────────────────── */
+  --weight-regular:   400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+
+  /* ── Interlineados ───────────────────────────────────────── */
+  --lh-tight:    1.00;
+  --lh-snug:     1.12;
+  --lh-base:     1.42;
+  --lh-relaxed:  1.55;
+
+  /* ── Espaciado de kicker ─────────────────────────────────── */
+  --ls-kicker:  0.34em;
+  --ls-handle:  0.20em;
+  --ls-number:  0.25em;
+}

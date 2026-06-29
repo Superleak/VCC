@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Stoa.Hoy — Creador de Carruseles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fuentes oficiales del canal -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- html2canvas para exportar PNGs sin servidor local -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* ── RESET Y VARIABLES DEL EDITOR ── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0c0b0a;
+      color: #ede6d8;
+      font-family: 'Hanken Grotesk', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── STOA.HOY PALETA DE DISEÑO EN LÁMINAS (Exactas según la plantilla) ── */
+    :root {
+      --accent-default: #A98B63;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
+      
+      /* Escala tipográfica exacta de la plantilla */
+      --text-display:       116px;
+      --text-h1:             82px;
+      --text-h2:             80px;
+      --text-quote-lg:       76px;
+      --text-quote-md:       60px;
+      --text-quote-sm:       56px;
+      --text-body-lg:        48px;
+      --text-body-md:        46px;
+      --text-list:           46px;
+      --text-attribution:    34px;
+      --text-handle:         26px;
+      --text-kicker:         26px;
+      --text-number:         24px;
+      --text-note:           26px;
+    }
+
+    /* Estilos comunes a las láminas en el preview */
+    .slide-content {
+      width: 1080px;
+      height: 1350px;
+      padding: 100px 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-sizing: border-box;
+      font-family: var(--font-sans);
+    }
+
+    /* Tema oscuro */
+    .slide-content.theme-dark {
+      background: radial-gradient(125% 85% at 50% 10%, #25221B 0%, #1A1714 68%, #131210 100%);
+      color: #EDE6D8;
+      --text-main: #EDE6D8;
+      --text-sub: #DCD4C4;
+      --text-muted: #9A917E;
+      --text-subtle: #8C8472;
+      --border-color: rgba(237, 230, 216, 0.14);
+      --svg-bg-diag: rgba(237, 230, 216, 0.05);
+    }
+
+    /* Tema claro */
+    .slide-content.theme-light {
+      background: radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%);
+      color: #26221C;
+      --text-main: #26221C;
+      --text-sub: #433D33;
+      --text-muted: #8A8170;
+      --text-subtle: #A39A86;
+      --border-color: rgba(124, 115, 97, 0.22);
+      --svg-bg-diag: rgba(124, 96, 56, 0.04);
+    }
+
+    /* ── LAYOUT PRINCIPAL DEL CREADOR ── */
+    .editor-sidebar {
+      width: 480px;
+      background: #151311;
+      border-right: 1px solid #2d261e;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .editor-header {
+      padding: 24px;
+      border-bottom: 1px solid #2d261e;
+      background: #0e0d0c;
+    }
+
+    .editor-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      color: #A98B63;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .editor-header p {
+      font-size: 12px;
+      color: #8c8472;
+      margin-top: 4px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .editor-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .editor-footer {
+      padding: 20px 24px;
+      border-top: 1px solid #2d261e;
+      background: #0e0d0c;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── FORMULARIO Y CONTROLES ── */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #A98B63;
+      margin: 24px 0 12px;
+      border-bottom: 1px solid rgba(169, 139, 99, 0.2);
+      padding-bottom: 6px;
+    }
+    .section-title:first-of-type {
+      margin-top: 0;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #c9c0ad;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .form-row .form-group {
+      margin-bottom: 0;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: #201d1a;
+      border: 1px solid #3d3429;
+      color: #ede6d8;
+      padding: 10px 12px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #A98B63;
+      box-shadow: 0 0 0 2px rgba(169, 139, 99, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .color-picker-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      cursor: pointer;
+      background: none;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: 1px solid #3d3429;
+      border-radius: 4px;
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #c9c0ad;
+      user-select: none;
+    }
+
+    .toggle-container input {
+      cursor: pointer;
+    }
+
+    /* Acordeón de láminas */
+    .slide-editor-card {
+      background: #1b1916;
+      border: 1px solid #2e261d;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .slide-editor-header {
+      padding: 14px 18px;
+      background: #201d1a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .slide-editor-header:hover {
+      background: #27231f;
+    }
+
+    .slide-editor-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ede6d8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slide-editor-title .slide-num {
+      color: #A98B63;
+      font-weight: 700;
+    }
+
+    .slide-editor-body {
+      padding: 18px;
+      border-top: 1px solid #2e261d;
+      display: none;
+    }
+
+    .slide-editor-card.active .slide-editor-body {
+      display: block;
+    }
+
+    .slide-editor-card.active .slide-editor-header {
+      background: #27231f;
+      border-bottom: 1px solid #2e261d;
+    }
+
+    /* ── BOTONES ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: #A98B63;
+      color: #FAF8F3;
+    }
+
+    .btn-primary:hover {
+      background: #bfa57d;
+      box-shadow: 0 4px 12px rgba(169, 139, 99, 0.3);
+    }
+
+    .btn-secondary {
+      background: #27231f;
+      color: #ede6d8;
+      border: 1px solid #3d3429;
+    }
+
+    .btn-secondary:hover {
+      background: #312c27;
+      border-color: #A98B63;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .slide-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #2e261d;
+    }
+
+    .btn-mini {
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 3px;
+      text-transform: none;
+      letter-spacing: 0;
+      width: auto;
+    }
+
+    /* ── PANEL DE PREVISUALIZACIÓN ── */
+    .preview-panel {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+      padding: 40px;
+      background: #0e0d0c;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      max-width: 1380px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .preview-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      color: #ede6d8;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(324px, 1fr));
+      gap: 40px;
+      max-width: 1380px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Contenedor miniatura con escala */
+    .slide-preview-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .slide-label-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #8c8472;
+      font-weight: 600;
+    }
+
+    .slide-outer-box {
+      width: 324px;
+      height: 405px;
+      overflow: hidden;
+      position: relative;
+      border-radius: 4px;
+      border: 1px solid #2d261e;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      background: #111;
+    }
+
+    /* Renderizado real a 1080x1350 escalado a 0.3x */
+    .slide-real-node {
+      width: 1080px;
+      height: 1350px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: scale(0.3);
+      transform-origin: top left;
+      pointer-events: none; /* Evita que clicks rompan cosas */
+    }
+
+    /* ── MAQUETACIÓN INTERNA DE LÁMINAS ── */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .slide-kicker {
+      font-size: var(--text-kicker);
+      font-weight: 600;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .slide-number {
+      font-size: var(--text-number);
+      letter-spacing: 0.25em;
+      color: var(--text-subtle);
+    }
+
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slide-handle {
+      font-size: var(--text-handle);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    .slide-drag-hint {
+      font-size: var(--text-number);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* Portada */
+    .slide-portada-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .slide-portada-column-container {
+      width: 340px;
+      height: 430px;
+      border: 1px solid var(--accent-soft);
+      background-image: repeating-linear-gradient(135deg, var(--svg-bg-diag) 0px, var(--svg-bg-diag) 2px, transparent 2px, transparent 11px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 56px;
+    }
+
+    .slide-portada-divider {
+      width: 56px;
+      height: 2px;
+      background: var(--accent);
+      margin-bottom: 34px;
+    }
+
+    .slide-portada-title {
+      font-family: var(--font-display);
+      font-size: var(--text-display);
+      font-weight: 600;
+      line-height: 0.98;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      text-wrap: balance;
+    }
+
+    .slide-portada-subtitle {
+      font-size: 34px;
+      font-weight: 400;
+      color: var(--text-sub);
+      margin-top: 32px;
+      letter-spacing: 0.02em;
+      max-width: 640px;
+      line-height: 1.5;
+    }
+
+    .slide-top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #7A5C32 0%, #C9A96E 30%, #E8C987 50%, #C9A96E 70%, #7A5C32 100%);
+      z-index: 10;
+    }
+
+    /* Cita */
+    .slide-cita-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide-quote-mark {
+      font-family: var(--font-display);
+      font-size: 130px;
+      line-height: 0.6;
+      color: var(--accent);
+      font-weight: 600;
+      height: 60px;
+    }
+
+    .slide-quote-text {
+      font-family: var(--font-display);
+      font-size: var(--text-quote-lg);
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      text-wrap: pretty;
+    }
+
+    .slide-quote-attribution {
+      font-size: var(--text-attribution);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-sub);
+      margin-top: 48px;
+    }
+
+    .slide-quote-work {
+      font-style: italic;
+      font-family: var(--font-display);
+      font-size: 36px;
+    }
+
+    .slide-note-text {
+      font-size: var(--text-note);
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 780px;
+    }
+
+    /* Listas */
+    .slide-list-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide-list-headline {
+      font-family: var(--font-display);
+      font-size: var(--text-h1);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      text-wrap: balance;
+    }
+
+    .slide-list-divider {
+      width: 56px;
+      height: 2px;
+      background: var(--accent);
+      margin-top: 36px;
+      margin-bottom: 24px;
+    }
+
+    .slide-list-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 10px 0;
+    }
+
+    .slide-list-item {
+      display: flex;
+      align-items: baseline;
+      gap: 28px;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .slide-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .slide-list-num {
+      font-size: 18px;
+      color: var(--accent);
+      font-weight: 600;
+      width: 28px;
+      flex-shrink: 0;
+    }
+
+    .slide-list-text {
+      font-family: var(--font-display);
+      font-size: var(--text-list);
+      font-weight: 500;
+      line-height: 1.12;
+      color: var(--text-sub);
+    }
+
+    /* Reflexión */
+    .slide-reflexion-cuerpo {
+      font-family: var(--font-display);
+      font-size: var(--text-body-lg);
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--text-sub);
+      text-wrap: pretty;
+      max-width: 840px;
+    }
+
+    /* Práctica */
+    .slide-practica-question {
+      font-family: var(--font-display);
+      font-size: var(--text-quote-sm);
+      font-style: italic;
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--text-main);
+      text-wrap: pretty;
+      margin-bottom: 36px;
+    }
+
+    .slide-practica-instruction {
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--text-sub);
+      max-width: 760px;
+    }
+
+    /* Cierre */
+    .slide-cierre-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide-cierre-quote {
+      font-family: var(--font-display);
+      font-size: var(--text-quote-md);
+      font-weight: 500;
+      line-height: 1.22;
+      letter-spacing: -0.005em;
+      color: var(--text-main);
+      text-wrap: pretty;
+    }
+
+    .slide-cierre-attribution {
+      font-size: var(--text-attribution);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-subtle);
+      margin-top: 40px;
+    }
+
+    .slide-cierre-panel {
+      border-top: 1px solid var(--border-color);
+      padding-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .slide-cierre-cta {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-sub);
+    }
+
+    .slide-cierre-links {
+      display: flex;
+      gap: 36px;
+      font-size: 30px;
+      letter-spacing: 0.06em;
+    }
+
+    .slide-cierre-link-ig {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .slide-cierre-link-yt {
+      color: var(--text-muted);
+    }
+
+    /* Panel de Carga / Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background: #1b1916;
+      border: 1px solid #3d3429;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 600px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .modal-header {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      color: #A98B63;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .modal-body textarea {
+      min-height: 250px;
+      font-family: monospace;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .modal-buttons button {
+      width: auto;
+    }
+
+    /* Progress overlay */
+    .progress-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 150;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ede6d8;
+    }
+
+    .progress-spinner {
+      border: 4px solid rgba(169, 139, 99, 0.2);
+      border-top: 4px solid #A98B63;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .progress-text {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── PANTALLA DE PROGRESO DE EXPORTACIÓN ── -->
+  <div id="progressOverlay" class="progress-overlay">
+    <div class="progress-spinner"></div>
+    <div id="progressText" class="progress-text">Exportando láminas...</div>
+  </div>
+
+  <!-- ── MODAL IMPORTAR / EXPORTAR JSON ── -->
+  <div id="jsonModal" class="modal-overlay">
+    <div class="modal-content">
+      <div id="modalTitle" class="modal-header">Importar JSON de Carrusel</div>
+      <div class="modal-body">
+        <textarea id="jsonTextArea" placeholder="Pega el contenido del archivo .json aquí..."></textarea>
+      </div>
+      <div class="modal-buttons">
+        <button onclick="closeJsonModal()" class="btn btn-secondary btn-mini">Cancelar</button>
+        <button id="modalActionBtn" onclick="applyJsonImport()" class="btn btn-primary btn-mini">Importar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PANEL DE CONTROL (IZQUIERDA) ── -->
+  <div class="editor-sidebar">
+    <div class="editor-header">
+      <h1>∞ CREADOR DE CARRUSELES</h1>
+      <p>Stoa.Hoy · Generador Autónomo Local</p>
+    </div>
+
+    <div class="editor-scroll">
+      <!-- CONFIGURACIÓN GLOBAL -->
+      <div class="section-title">Configuración General</div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Plataforma Destino</label>
+        <div style="display: flex; gap: 0; border-radius: 4px; overflow: hidden; border: 1px solid #3d3429;">
+          <button id="platformBtnIG" onclick="setPlatform('instagram')" style="flex:1; padding: 10px 8px; font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border: none; transition: all 0.2s; background: #A98B63; color: #FAF8F3;">📸 Instagram</button>
+          <button id="platformBtnYT" onclick="setPlatform('youtube')" style="flex:1; padding: 10px 8px; font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border: none; transition: all 0.2s; background: #27231f; color: #8c8472;">▶ YouTube</button>
+        </div>
+        <div id="platformHint" style="font-size: 11px; color: #8c8472; margin-top: 6px; letter-spacing: 0.04em;">4:5 · 1080×1350 px · Carrusel Instagram</div>
+      </div>
+      
+      <div class="form-group">
+        <label>Tema del Carrusel</label>
+        <input type="text" id="metaTema" oninput="updateMeta()">
+      </div>
+
+      <div class="form-group">
+        <label>Subtema del Carrusel</label>
+        <input type="text" id="metaSubtema" oninput="updateMeta()">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Kicker General</label>
+          <input type="text" id="metaKicker" oninput="updateMeta()">
+        </div>
+        <div class="form-group">
+          <label>Handle Social</label>
+          <input type="text" id="metaHandle" oninput="updateMeta()">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Color de Acento</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="accentColor" onchange="updateMeta()" value="#A98B63">
+            <span style="font-size: 13px;" id="accentHex">#A98B63</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-group" style="margin-bottom: 12px;">
+        <label class="toggle-container">
+          <input type="checkbox" id="showNumbers" checked onchange="updateMeta()"> Numerar Láminas (01 / 08)
+        </label>
+        <label class="toggle-container">
+          <input type="checkbox" id="showDragHint" checked onchange="updateMeta()"> Mostrar "Desliza →"
+        </label>
+      </div>
+
+      <div class="form-row" style="margin-bottom: 24px;">
+        <div class="form-group" style="grid-column: span 2;">
+          <label>Número de Diapositivas</label>
+          <input type="number" id="numSlidesInput" min="1" max="25" onchange="changeSlidesCount(this.value)">
+        </div>
+      </div>
+
+      <!-- BOTONES DE ARCHIVO -->
+      <div class="section-title">Archivos de Datos</div>
+      <div class="btn-row" style="margin-bottom: 24px;">
+        <button onclick="openImportModal()" class="btn btn-secondary btn-mini">Cargar JSON</button>
+        <button onclick="exportJsonFile()" class="btn btn-secondary btn-mini">Guardar JSON</button>
+      </div>
+
+      <!-- ACORDEÓN DE LÁMINAS -->
+      <div class="section-title">Editor de Láminas</div>
+      <div id="slidesEditorContainer">
+        <!-- Generado dinámicamente en JS -->
+      </div>
+      
+      <div style="margin-top: 16px;">
+        <button onclick="addNewSlide()" class="btn btn-secondary btn-mini" style="width: 100%;">+ Añadir Lámina al final</button>
+      </div>
+
+      <!-- COPIADOS SEO -->
+      <div class="section-title">Textos de Redes (SEO)</div>
+      
+      <div class="form-group">
+        <label>YouTube Título</label>
+        <input type="text" id="seoYtTitle" oninput="updateSeo()">
+      </div>
+      <div class="form-group">
+        <label>YouTube Descripción</label>
+        <textarea id="seoYtDesc" oninput="updateSeo()"></textarea>
+      </div>
+      <div class="form-group">
+        <label>YouTube Tags</label>
+        <input type="text" id="seoYtTags" oninput="updateSeo()">
+      </div>
+
+      <div class="form-group">
+        <label>Instagram Caption</label>
+        <textarea id="seoIgCaption" oninput="updateSeo()"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Instagram Primer Comentario</label>
+        <textarea id="seoIgComment" oninput="updateSeo()"></textarea>
+      </div>
+    </div>
+
+    <!-- PIE DEL PANEL (ACCIONES DE EXPORTAR) -->
+    <div class="editor-footer">
+      <button onclick="exportPngs()" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Exportar Láminas PNG
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PANEL DE PREVISUALIZACIÓN (DERECHA) ── -->
+  <div class="preview-panel">
+    <div class="preview-header">
+      <h2>Previsualización en Tiempo Real</h2>
+      <div style="font-size: 13px; color: #8c8472; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;" id="carruselInfo">
+        8 Láminas · 1080 × 1350 px
+      </div>
+    </div>
+
+    <div id="previewGrid" class="preview-grid">
+      <!-- Generado dinámicamente por JS en tiempo real -->
+    </div>
+  </div>
+
+  <!-- ── MOTOR LÓGICO DEL EDITOR ── -->
+  <script>
+    // Plantilla inicial de datos por defecto (Exactamente según Plantilla Carrusel.dc.html)
+    function defaultCarruselData() {
+      return {
+        meta: {
+          kicker: "Estoicismo · Epicteto",
+          handle: "STOA · HOY",
+          tema: "Dicotomía del Control",
+          subtema: "El arte estoico de la verdadera libertad"
+        },
+        showNumbers: true,
+        showDragHint: true,
+        accentColor: "#A98B63",
+        slides: [
+          {
+            tipo: "portada",
+            theme: "dark",
+            kicker: "Estoicismo · Epicteto",
+            titulo: "Control\no Caos",
+            subtitulo: "El arte estoico de la verdadera libertad",
+            cta: "Desliza →"
+          },
+          {
+            tipo: "cita",
+            theme: "light",
+            kicker: "El principio",
+            cita: "De las cosas que existen, algunas dependen de nosotros y otras no dependen de nosotros.",
+            atribucion: "Epicteto",
+            obra: "Enquiridión",
+            nota: "No nació en un palacio: Epicteto pasó la mitad de su vida como esclavo antes de poder enseñar libertad."
+          },
+          {
+            tipo: "lista",
+            theme: "light",
+            kicker: "Bajo tu control",
+            headline: "Tu zona de poder.\nNada más.",
+            items: [
+              "Tus opiniones y juicios sobre las cosas",
+              "Tus deseos y lo que decides rechazar",
+              "Tus propias acciones y respuestas",
+              "El esfuerzo que pones en este momento"
+            ],
+            nota: "Aquí es donde se define tu virtud. Tu energía pertenece solo a este espacio."
+          },
+          {
+            tipo: "lista-negativa",
+            theme: "dark",
+            kicker: "Fuera de tu control",
+            headline: "Lo que debes soltar",
+            items: [
+              "Las acciones y opiniones de los demás",
+              "El resultado final de tus esfuerzos",
+              "Tu reputación o lo que dicen de ti",
+              "El pasado, el futuro y el clima",
+              "El éxito social o riqueza material"
+            ],
+            nota: "Preocuparse por esto es otorgarle el control de tu felicidad a factores externos."
+          },
+          {
+            tipo: "reflexion",
+            theme: "light",
+            kicker: "El error",
+            headline: "Sufres por lo que no puedes cambiar",
+            cuerpo: "Inviertes noches de insomnio intentando controlar el tráfico, la economía o el humor de tu jefe. Mientras desgastas tu mente en lo inalterable, descuidas lo único que sí puedes moldear: tu propia mente.",
+            nota: "La ansiedad nace cuando intentas controlar lo que no depende de ti."
+          },
+          {
+            tipo: "reflexion",
+            theme: "light",
+            kicker: "La estrategia",
+            headline: "Controla el esfuerzo, acepta el resultado.",
+            cuerpo: "El arquero estoico hace todo lo que está en su mano para apuntar bien: entrena, cuida su arco y mide el viento. Pero una vez que la flecha vuela, acepta con serenidad si una ráfaga de viento la desvía. El éxito real estuvo en el tiro.",
+            nota: "El estoico juega para dar lo mejor de sí, no obsesionado con el marcador."
+          },
+          {
+            tipo: "practica",
+            theme: "light",
+            kicker: "Práctica de hoy",
+            headline: "Haz el filtro estoico",
+            pregunta: "«Esto que me preocupa ahora mismo, ¿depende de mí o no depende de mí?»",
+            instruccion: "Si depende de ti, actúa con excelencia ahora. Si no depende de ti, di conscientemente: 'Esto no es nada para mí' y déjalo ir.",
+            nota: "No es indiferencia. Es gestionar tu energía con precisión militar."
+          },
+          {
+            tipo: "cierre",
+            theme: "dark",
+            kicker: "Para recordar",
+            cita: "Ninguna persona es libre si no es dueña de sí misma.",
+            atribucion: "Epicteto",
+            obra: "Disertaciones",
+            cta_ig: "Sígueme en Instagram"
+          },
+          {
+            tipo: "cta-ig",
+            theme: "dark",
+            kicker: "Para recordar",
+            cita: "Ninguna persona es libre si no es dueña de sí misma.",
+            atribucion: "Epicteto, Enquiridíon",
+            guardar_txt: "Guarda este carrusel",
+            ig_handle: "@Stoa.Hoy"
+          },
+          {
+            tipo: "cta-yt",
+            theme: "dark",
+            yt_intro: "Si esto te hizo pensar,",
+            yt_subline: "Cada día, una idea que cambia cómo ves el mundo.",
+            yt_handle: "@Stoa-Hoy"
+          }
+        ],
+        platform: "instagram",
+        seo: {
+          yt: {
+            titulo: "Dicotomía del Control: la regla de oro estoica para eliminar la ansiedad (Epicteto)",
+            descripcion: "¿Y si la mayor parte de tu sufrimiento diario viniera de intentar controlar lo incontrolable?\n\nEn este video desglosamos la Dicotomía del Control: qué está en tus manos, qué debes soltar hoy mismo y cómo aplicar este filtro mental en tu rutina.\n\n━━━━━━━━━━━━━━━━\n«De las cosas que existen, algunas dependen de nosotros y otras no dependen de nosotros.»\n— Epicteto, Enquiridión\n\n▶ Instagram: @Stoa.Hoy\n▶ YouTube: @Stoa-Hoy",
+            tags: "estoicismo, dicotomia del control, epicteto, filosofia estoica, stoicism, desarrollopersonal, ansiedad, paz mental, autocontrol, filosofia, habitosmentales, crecimientopersonal, sabiduria, mentalidad"
+          },
+          ig: {
+            caption: "¿Cuánta energía pierdes al día intentando cambiar cosas que no dependen de ti?\n\nEpicteto lo tenía claro: la verdadera libertad empieza el día que trazas una línea divisoria entre tu zona de poder y el resto del mundo.\n\nFiltra tus preocupaciones antes de que ellas te compren a ti.\n\nGuarda este carrusel para cuando sientas que el caos te supera. 📌\n\n#estoicismo #epicteto #dicotomiadelcontrol #filosofiaestoica #desarrollopersonal #pazmental",
+            primerComentario: "#estoicismo #epicteto #dicotomiadelcontrol #stoicism #filosofia #desarrollopersonal #mindset #estoico #stoic #bienestar #saludmental #crecimientopersonal #reflexion #sabiduria #autocontrol #mentalidad #filosofiaestoica"
+          }
+        }
+      };
+    }
+
+    // Variables de estado
+    let currentCarrusel = JSON.parse(JSON.stringify(defaultCarruselData()));
+    let activeAccordionIndex = 0;
+
+    // Inicializar aplicación
+    window.addEventListener("DOMContentLoaded", () => {
+      loadFormData();
+      renderSlideEditors();
+      renderPreviews();
+    });
+
+    // Cargar datos en los inputs del formulario
+    function loadFormData() {
+      document.getElementById("metaTema").value = currentCarrusel.meta.tema || "";
+      document.getElementById("metaSubtema").value = currentCarrusel.meta.subtema || "";
+      document.getElementById("metaKicker").value = currentCarrusel.meta.kicker || "";
+      document.getElementById("metaHandle").value = currentCarrusel.meta.handle || "STOA · HOY";
+      
+      const acc = currentCarrusel.accentColor || "#A98B63";
+      document.getElementById("accentColor").value = acc;
+      document.getElementById("accentHex").innerText = acc;
+      
+      document.getElementById("showNumbers").checked = currentCarrusel.showNumbers !== false;
+      document.getElementById("showDragHint").checked = currentCarrusel.showDragHint !== false;
+      document.getElementById("numSlidesInput").value = currentCarrusel.slides.length;
+
+      // Restaurar plataforma
+      const plat = currentCarrusel.platform || 'instagram';
+      setPlatform(plat);
+
+      // SEO
+      const seo = currentCarrusel.seo || { yt: {}, ig: {} };
+      document.getElementById("seoYtTitle").value = (seo.yt && seo.yt.titulo) || "";
+      document.getElementById("seoYtDesc").value = (seo.yt && seo.yt.descripcion) || "";
+      document.getElementById("seoYtTags").value = (seo.yt && seo.yt.tags) || "";
+      document.getElementById("seoIgCaption").value = (seo.ig && seo.ig.caption) || "";
+      document.getElementById("seoIgComment").value = (seo.ig && seo.ig.primerComentario) || "";
+
+      document.getElementById("carruselInfo").innerText = `${currentCarrusel.slides.length} Láminas · 1080 × 1350 px`;
+    }
+
+    // Cambiar la cantidad de diapositivas reactivamente
+    function changeSlidesCount(newVal) {
+      const newCount = parseInt(newVal);
+      if (isNaN(newCount) || newCount < 1) return;
+      
+      const currentCount = currentCarrusel.slides.length;
+      if (newCount === currentCount) return;
+
+      if (newCount < currentCount) {
+        if (confirm(`¿Estás seguro de que deseas reducir el carrusel a ${newCount} láminas? Se eliminarán permanentemente las últimas ${currentCount - newCount} láminas.`)) {
+          currentCarrusel.slides = currentCarrusel.slides.slice(0, newCount);
+          activeAccordionIndex = Math.min(activeAccordionIndex, newCount - 1);
+        } else {
+          document.getElementById("numSlidesInput").value = currentCount;
+          return;
+        }
+      } else {
+        const diff = newCount - currentCount;
+        for (let i = 0; i < diff; i++) {
+          currentCarrusel.slides.push({
+            tipo: "reflexion",
+            theme: "light",
+            kicker: "",
+            headline: "Nueva Lámina",
+            cuerpo: "Desarrolla una nueva idea aquí. Recuerda mantener precisión léxica y concisión.",
+            nota: "Línea de nota al pie."
+          });
+        }
+      }
+
+      loadFormData();
+      renderSlideEditors();
+      renderPreviews();
+    }
+
+    // Actualizar datos globales (Meta)
+    function updateMeta() {
+      currentCarrusel.meta.tema = document.getElementById("metaTema").value;
+      currentCarrusel.meta.subtema = document.getElementById("metaSubtema").value;
+      currentCarrusel.meta.kicker = document.getElementById("metaKicker").value;
+      currentCarrusel.meta.handle = document.getElementById("metaHandle").value;
+      
+      const color = document.getElementById("accentColor").value;
+      currentCarrusel.accentColor = color;
+      document.getElementById("accentHex").innerText = color;
+
+      currentCarrusel.showNumbers = document.getElementById("showNumbers").checked;
+      currentCarrusel.showDragHint = document.getElementById("showDragHint").checked;
+      currentCarrusel.platform = currentPlatform;
+
+      // Actualizar variables de acento CSS en tiempo real
+      document.documentElement.style.setProperty('--accent-default', color);
+
+      renderPreviews();
+    }
+
+    // Actualizar datos de SEO
+    function updateSeo() {
+      if (!currentCarrusel.seo) currentCarrusel.seo = { yt: {}, ig: {} };
+      currentCarrusel.seo.yt.titulo = document.getElementById("seoYtTitle").value;
+      currentCarrusel.seo.yt.descripcion = document.getElementById("seoYtDesc").value;
+      currentCarrusel.seo.yt.tags = document.getElementById("seoYtTags").value;
+      currentCarrusel.seo.ig.caption = document.getElementById("seoIgCaption").value;
+      currentCarrusel.seo.ig.primerComentario = document.getElementById("seoIgComment").value;
+    }
+
+    // Renderizar la lista de editores de láminas (Acordeón)
+    function renderSlideEditors() {
+      const container = document.getElementById("slidesEditorContainer");
+      container.innerHTML = "";
+
+      currentCarrusel.slides.forEach((slide, index) => {
+        const card = document.createElement("div");
+        card.className = `slide-editor-card ${index === activeAccordionIndex ? "active" : ""}`;
+        card.dataset.index = index;
+
+        const header = document.createElement("div");
+        header.className = "slide-editor-header";
+        header.onclick = () => toggleAccordion(index);
+
+        const title = document.createElement("div");
+        title.className = "slide-editor-title";
+        title.innerHTML = `<span class="slide-num">${String(index + 1).padStart(2, '0')}</span> — ${getFriendlySlideTypeName(slide.tipo)}`;
+        header.appendChild(title);
+
+        const arrow = document.createElement("span");
+        arrow.innerHTML = index === activeAccordionIndex ? "▲" : "▼";
+        arrow.style.fontSize = "10px";
+        arrow.style.color = "#8c8472";
+        header.appendChild(arrow);
+
+        card.appendChild(header);
+
+        // Cuerpo con los campos del formulario dinámicos basados en el tipo de lámina
+        const body = document.createElement("div");
+        body.className = "slide-editor-body";
+
+        // Selector de tipo de lámina
+        const typeGroup = document.createElement("div");
+        typeGroup.className = "form-row";
+        typeGroup.innerHTML = `
+          <div class="form-group" style="grid-column: span 2;">
+            <label>Tipo de Lámina</label>
+            <select onchange="changeSlideType(${index}, this.value)">
+              <option value="portada" ${slide.tipo === 'portada' ? 'selected' : ''}>Portada</option>
+              <option value="cita" ${slide.tipo === 'cita' ? 'selected' : ''}>Cita Fundacional</option>
+              <option value="lista" ${slide.tipo === 'lista' ? 'selected' : ''}>Lista SÍ (Numerada)</option>
+              <option value="lista-negativa" ${slide.tipo === 'lista-negativa' ? 'selected' : ''}>Lista NO (Descarte)</option>
+              <option value="reflexion" ${slide.tipo === 'reflexion' ? 'selected' : ''}>Reflexión / Explicación</option>
+              <option value="practica" ${slide.tipo === 'practica' ? 'selected' : ''}>Práctica de hoy / Prompt</option>
+              <option value="cierre" ${slide.tipo === 'cierre' ? 'selected' : ''}>Cierre / CTA</option>
+              <optgroup label="── CTA Final ──">
+                <option value="cta-ig" ${slide.tipo === 'cta-ig' ? 'selected' : ''}>🏁 CTA Final — Instagram</option>
+                <option value="cta-yt" ${slide.tipo === 'cta-yt' ? 'selected' : ''}>🏁 CTA Final — YouTube (9:16)</option>
+              </optgroup>
+            </select>
+          </div>
+        `;
+        body.appendChild(typeGroup);
+
+        // Selector de tema (Fondo Claro/Oscuro)
+        const themeGroup = document.createElement("div");
+        themeGroup.className = "form-group";
+        themeGroup.innerHTML = `
+          <label>Fondo de la Lámina</label>
+          <select onchange="changeSlideTheme(${index}, this.value)" style="background: #27231f;">
+            <option value="light" ${slide.theme === 'light' ? 'selected' : ''}>Claro (Crema)</option>
+            <option value="dark" ${slide.theme === 'dark' ? 'selected' : ''}>Oscuro (Carbón)</option>
+          </select>
+        `;
+        body.appendChild(themeGroup);
+
+        // Kicker personalizado opcional
+        const kickerGroup = document.createElement("div");
+        kickerGroup.className = "form-group";
+        kickerGroup.innerHTML = `
+          <label>Etiqueta Superior (Kicker) <span style="font-size:9px; color:#8c8472;">(Dejar vacío para el global)</span></label>
+          <input type="text" value="${slide.kicker || ''}" placeholder="Ej: EL PRINCIPIO" oninput="updateSlideField(${index}, 'kicker', this.value)">
+        `;
+        body.appendChild(kickerGroup);
+
+        // Campos específicos
+        const fieldsContainer = document.createElement("div");
+        fieldsContainer.innerHTML = getFieldsHtmlForType(slide, index);
+        body.appendChild(fieldsContainer);
+
+        // Acciones sobre la lámina (Mover, Duplicar, Eliminar)
+        const actions = document.createElement("div");
+        actions.className = "slide-actions";
+        actions.innerHTML = `
+          <button onclick="duplicateSlide(${index})" class="btn btn-secondary btn-mini">Duplicar</button>
+          <button onclick="moveSlideUp(${index})" class="btn btn-secondary btn-mini" ${index === 0 ? 'disabled' : ''}>Subir</button>
+          <button onclick="moveSlideDown(${index})" class="btn btn-secondary btn-mini" ${index === currentCarrusel.slides.length - 1 ? 'disabled' : ''}>Bajar</button>
+          <button onclick="deleteSlide(${index})" class="btn btn-secondary btn-mini" style="background:#421f19; border-color:#63271d; color:#ffdcd6;">Eliminar</button>
+        `;
+        body.appendChild(actions);
+
+        card.appendChild(body);
+        container.appendChild(card);
+      });
+    }
+
+    // Obtener campos HTML correspondientes a cada tipo
+    function getFieldsHtmlForType(slide, idx) {
+      switch (slide.tipo) {
+        case "portada":
+          return `
+            <div class="form-group">
+              <label>Título (Usa \\n para saltar línea)</label>
+              <textarea oninput="updateSlideField(${idx}, 'titulo', this.value)">${slide.titulo || ""}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Subtítulo (Usa \\n para saltar línea)</label>
+              <textarea oninput="updateSlideField(${idx}, 'subtitulo', this.value)">${slide.subtitulo || ""}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Indicación de Deslizar</label>
+              <input type="text" value="${slide.cta || "Desliza →"}" oninput="updateSlideField(${idx}, 'cta', this.value)">
+            </div>
+          `;
+        case "cita":
+          return `
+            <div class="form-group">
+              <label>Texto de la Cita</label>
+              <textarea oninput="updateSlideField(${idx}, 'cita', this.value)">${slide.cita || ""}</textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Atribución (Filósofo)</label>
+                <input type="text" value="${slide.atribucion || ""}" oninput="updateSlideField(${idx}, 'atribucion', this.value)">
+              </div>
+              <div class="form-group">
+                <label>Obra</label>
+                <input type="text" value="${slide.obra || ""}" oninput="updateSlideField(${idx}, 'obra', this.value)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Nota al pie (Explicación breve)</label>
+              <textarea oninput="updateSlideField(${idx}, 'nota', this.value)">${slide.nota || ""}</textarea>
+            </div>
+          `;
+        case "lista":
+        case "lista-negativa":
+          return `
+            <div class="form-group">
+              <label>Titular de la Lista</label>
+              <input type="text" value="${slide.headline || ""}" oninput="updateSlideField(${idx}, 'headline', this.value)">
+            </div>
+            <div class="form-group">
+              <label>Elemento 1</label>
+              <input type="text" value="${(slide.items && slide.items[0]) || ""}" oninput="updateSlideListItem(${idx}, 0, this.value)">
+            </div>
+            <div class="form-group">
+              <label>Elemento 2</label>
+              <input type="text" value="${(slide.items && slide.items[1]) || ""}" oninput="updateSlideListItem(${idx}, 1, this.value)">
+            </div>
+            <div class="form-group">
+              <label>Elemento 3</label>
+              <input type="text" value="${(slide.items && slide.items[2]) || ""}" oninput="updateSlideListItem(${idx}, 2, this.value)">
+            </div>
+            <div class="form-group">
+              <label>Elemento 4</label>
+              <input type="text" value="${(slide.items && slide.items[3]) || ""}" oninput="updateSlideListItem(${idx}, 3, this.value)">
+            </div>
+            <div class="form-group">
+              <label>Elemento 5 (Opcional)</label>
+              <input type="text" value="${(slide.items && slide.items[4]) || ""}" oninput="updateSlideListItem(${idx}, 4, this.value)">
+            </div>
+            <div class="form-group">
+              <label>Nota al pie</label>
+              <textarea oninput="updateSlideField(${idx}, 'nota', this.value)">${slide.nota || ""}</textarea>
+            </div>
+          `;
+        case "reflexion":
+          return `
+            <div class="form-group">
+              <label>Titular</label>
+              <input type="text" value="${slide.headline || ""}" oninput="updateSlideField(${idx}, 'headline', this.value)">
+            </div>
+            <div class="form-group">
+              <label>Cuerpo / Párrafo (Usa \\n para saltar línea)</label>
+              <textarea oninput="updateSlideField(${idx}, 'cuerpo', this.value)" style="min-height:120px;">${slide.cuerpo || ""}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Nota al pie</label>
+              <textarea oninput="updateSlideField(${idx}, 'nota', this.value)">${slide.nota || ""}</textarea>
+            </div>
+          `;
+        case "practica":
+          return `
+            <div class="form-group">
+              <label>Titular</label>
+              <input type="text" value="${slide.headline || ""}" oninput="updateSlideField(${idx}, 'headline', this.value)">
+            </div>
+            <div class="form-group">
+              <label>Pregunta / Reflexión destacado</label>
+              <textarea oninput="updateSlideField(${idx}, 'pregunta', this.value)">${slide.pregunta || ""}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Instrucción o ejercicio práctico (Usa \\n para saltar línea)</label>
+              <textarea oninput="updateSlideField(${idx}, 'instruccion', this.value)">${slide.instruccion || ""}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Nota al pie</label>
+              <textarea oninput="updateSlideField(${idx}, 'nota', this.value)">${slide.nota || ""}</textarea>
+            </div>
+          `;
+        case "cta-ig":
+          return `
+            <div class="form-group">
+              <label>Cita destacada</label>
+              <textarea oninput="updateSlideField(${idx}, 'cita', this.value)">${slide.cita || ""}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Atribución (Filósofo, Obra)</label>
+              <input type="text" value="${slide.atribucion || ''}" oninput="updateSlideField(${idx}, 'atribucion', this.value)">
+            </div>
+            <div class="form-group">
+              <label>Texto tarjeta "Guardar"</label>
+              <input type="text" value="${slide.guardar_txt || 'Guarda este carrusel'}" oninput="updateSlideField(${idx}, 'guardar_txt', this.value)">
+            </div>
+            <div class="form-group">
+              <label>Handle de Instagram</label>
+              <input type="text" value="${slide.ig_handle || '@Stoa.Hoy'}" oninput="updateSlideField(${idx}, 'ig_handle', this.value)">
+            </div>
+          `;
+        case "cta-yt":
+          return `
+            <div class="form-group">
+              <label>Intro (texto en cursiva, pequeño)</label>
+              <input type="text" value="${slide.yt_intro || 'Si esto te hizo pensar,'}" oninput="updateSlideField(${idx}, 'yt_intro', this.value)">
+            </div>
+            <div class="form-group">
+              <label>Subline (descripción bajo SUSCRÍBETE)</label>
+              <textarea oninput="updateSlideField(${idx}, 'yt_subline', this.value)">${slide.yt_subline || 'Cada día, una idea que cambia cómo ves el mundo.'}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Handle YouTube</label>
+              <input type="text" value="${slide.yt_handle || '@Stoa-Hoy'}" oninput="updateSlideField(${idx}, 'yt_handle', this.value)">
+            </div>
+          `;
+        case "cierre":
+          return `
+            <div class="form-group">
+              <label>Cita de Cierre</label>
+              <textarea oninput="updateSlideField(${idx}, 'cita', this.value)">${slide.cita || ""}</textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Atribución (Filósofo)</label>
+                <input type="text" value="${slide.atribucion || ""}" oninput="updateSlideField(${idx}, 'atribucion', this.value)">
+              </div>
+              <div class="form-group">
+                <label>Obra (Opcional)</label>
+                <input type="text" value="${slide.obra || ""}" oninput="updateSlideField(${idx}, 'obra', this.value)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Línea de CTA (Llamado a la acción)</label>
+              <input type="text" value="${slide.cta_ig || "Sígueme en Instagram"}" oninput="updateSlideField(${idx}, 'cta_ig', this.value)">
+            </div>
+          `;
+      }
+      return "";
+    }
+
+    // Funciones del Acordeón
+    function toggleAccordion(index) {
+      if (activeAccordionIndex === index) {
+        activeAccordionIndex = -1;
+      } else {
+        activeAccordionIndex = index;
+      }
+      renderSlideEditors();
+    }
+
+    // ── SELECTOR DE PLATAFORMA ──
+    let currentPlatform = 'instagram'; // 'instagram' | 'youtube'
+
+    function setPlatform(platform) {
+      currentPlatform = platform;
+      const btnIG = document.getElementById('platformBtnIG');
+      const btnYT = document.getElementById('platformBtnYT');
+      const hint = document.getElementById('platformHint');
+      if (platform === 'instagram') {
+        btnIG.style.background = '#A98B63'; btnIG.style.color = '#FAF8F3';
+        btnYT.style.background = '#27231f'; btnYT.style.color = '#8c8472';
+        hint.innerText = '4:5 · 1080×1350 px · Carrusel Instagram';
+      } else {
+        btnYT.style.background = '#A98B63'; btnYT.style.color = '#FAF8F3';
+        btnIG.style.background = '#27231f'; btnIG.style.color = '#8c8472';
+        hint.innerText = '9:16 · 1080×1920 px · YouTube Shorts';
+      }
+    }
+
+    function getFriendlySlideTypeName(type) {
+      switch (type) {
+        case "portada": return "Portada";
+        case "cita": return "Cita Fundacional";
+        case "lista": return "Lista SÍ (Numerada)";
+        case "lista-negativa": return "Lista NO (Descarte)";
+        case "reflexion": return "Reflexión / Explicación";
+        case "practica": return "Práctica de hoy / Prompt";
+        case "cierre": return "Cierre / CTA";
+        case "cta-ig": return "🏁 CTA Final IG";
+        case "cta-yt": return "🏁 CTA Final YT (9:16)";
+        default: return type;
+      }
+    }
+
+    // Actualizar campo específico de un slide
+    function updateSlideField(slideIdx, field, val) {
+      currentCarrusel.slides[slideIdx][field] = val;
+      renderPreviews();
+    }
+
+    // Actualizar ítem de lista de un slide
+    function updateSlideListItem(slideIdx, itemIdx, val) {
+      if (!currentCarrusel.slides[slideIdx].items) {
+        currentCarrusel.slides[slideIdx].items = ["", "", "", "", ""];
+      }
+      currentCarrusel.slides[slideIdx].items[itemIdx] = val;
+      renderPreviews();
+    }
+
+    // Cambiar tipo de lámina
+    function changeSlideType(idx, newType) {
+      const slide = currentCarrusel.slides[idx];
+      
+      // Preservar datos comunes al cambiar de tipo
+      const newSlide = {
+        tipo: newType,
+        theme: slide.theme || (newType === 'portada' || newType === 'cierre' || newType === 'lista-negativa' ? 'dark' : 'light'),
+        kicker: slide.kicker || ""
+      };
+
+      // Rellenar con placeholders y estructuras según la plantilla oficial
+      if (newType === "portada") {
+        newSlide.titulo = slide.headline || slide.cita || "El concepto\nestoico";
+        newSlide.subtitulo = currentCarrusel.meta.subtema || "El subtítulo que introduce el tema de este carrusel";
+        newSlide.cta = "Desliza →";
+      } else if (newType === "cita") {
+        newSlide.cita = slide.titulo || "La cita fundacional que define el concepto de este carrusel.";
+        newSlide.atribucion = slide.atribucion || "Filósofo";
+        newSlide.obra = slide.obra || "Nombre de la obra";
+        newSlide.nota = slide.nota || "Una línea de contexto o reflexión sobre la cita anterior.";
+      } else if (newType === "lista" || newType === "lista-negativa") {
+        newSlide.headline = slide.titulo || slide.headline || "Heading de esta lámina";
+        newSlide.items = slide.items || ["Primer elemento de la lista", "Segundo elemento de la lista", "Tercer elemento de la lista", "Cuarto elemento de la lista", "Quinto elemento de la lista"];
+        newSlide.nota = slide.nota || "Una línea de cierre para esta lámina.";
+      } else if (newType === "reflexion") {
+        newSlide.headline = slide.headline || "El heading de la reflexión";
+        newSlide.cuerpo = slide.cita || "El cuerpo que desarrolla la idea. Una sola idea por lámina. Oraciones completas con precisión léxica.";
+        newSlide.nota = slide.nota || "Una línea de remate o síntesis al pie de la lámina.";
+      } else if (newType === "practica") {
+        newSlide.headline = "Pregúntate hoy";
+        newSlide.pregunta = "«El prompt reflexivo o ejercicio de journaling entre comillas.»";
+        newSlide.instruccion = "Instrucción breve sobre cómo aplicar el ejercicio en la vida cotidiana.";
+        newSlide.nota = slide.nota || "Una línea de aliento o síntesis al pie.";
+      } else if (newType === "cierre") {
+        newSlide.cita = slide.cita || "La cita de cierre que sintetiza el mensaje de este carrusel y queda grabada en la memoria.";
+        newSlide.atribucion = slide.atribucion || "Filósofo";
+        newSlide.obra = slide.obra || "";
+        newSlide.cta_ig = "Sígueme para estoicismo cada día";
+      }
+
+      currentCarrusel.slides[idx] = newSlide;
+      renderSlideEditors();
+      renderPreviews();
+    }
+
+    // Cambiar tema (Fondo Claro/Oscuro)
+    function changeSlideTheme(idx, newTheme) {
+      currentCarrusel.slides[idx].theme = newTheme;
+      renderPreviews();
+    }
+
+    // Manipulaciones de lista de láminas
+    function duplicateSlide(idx) {
+      const slide = JSON.parse(JSON.stringify(currentCarrusel.slides[idx]));
+      currentCarrusel.slides.splice(idx + 1, 0, slide);
+      activeAccordionIndex = idx + 1;
+      loadFormData();
+      renderSlideEditors();
+      renderPreviews();
+    }
+
+    function deleteSlide(idx) {
+      if (currentCarrusel.slides.length <= 1) {
+        alert("El carrusel debe tener al menos 1 lámina.");
+        return;
+      }
+      if (confirm(`¿Estás seguro de que deseas eliminar la lámina ${idx + 1}?`)) {
+        currentCarrusel.slides.splice(idx, 1);
+        activeAccordionIndex = Math.max(0, idx - 1);
+        loadFormData();
+        renderSlideEditors();
+        renderPreviews();
+      }
+    }
+
+    function moveSlideUp(idx) {
+      if (idx === 0) return;
+      const temp = currentCarrusel.slides[idx];
+      currentCarrusel.slides[idx] = currentCarrusel.slides[idx - 1];
+      currentCarrusel.slides[idx - 1] = temp;
+      activeAccordionIndex = idx - 1;
+      renderSlideEditors();
+      renderPreviews();
+    }
+
+    function moveSlideDown(idx) {
+      if (idx === currentCarrusel.slides.length - 1) return;
+      const temp = currentCarrusel.slides[idx];
+      currentCarrusel.slides[idx] = currentCarrusel.slides[idx + 1];
+      currentCarrusel.slides[idx + 1] = temp;
+      activeAccordionIndex = idx + 1;
+      renderSlideEditors();
+      renderPreviews();
+    }
+
+    function addNewSlide() {
+      const newSlide = {
+        tipo: "reflexion",
+        theme: "light",
+        kicker: "",
+        headline: "Heading de esta lámina",
+        cuerpo: "El cuerpo que desarrolla la idea. Una sola idea por lámina. Oraciones completas con precisión léxica.",
+        nota: "Una línea de remate o síntesis al pie de la lámina."
+      };
+      currentCarrusel.slides.push(newSlide);
+      activeAccordionIndex = currentCarrusel.slides.length - 1;
+      loadFormData();
+      renderSlideEditors();
+      renderPreviews();
+      
+      // Auto scroll hasta abajo en el panel izquierdo
+      setTimeout(() => {
+        const scrollDiv = document.querySelector(".editor-scroll");
+        scrollDiv.scrollTop = scrollDiv.scrollHeight;
+      }, 50);
+    }
+
+    // ── RENDERIZAR PREVISUALIZACIONES (DERECHA) ──
+    function renderPreviews() {
+      const grid = document.getElementById("previewGrid");
+      grid.innerHTML = "";
+
+      const accentColor = currentCarrusel.accentColor || "#A98B63";
+
+      currentCarrusel.slides.forEach((slide, index) => {
+        const itemWrap = document.createElement("div");
+        itemWrap.className = "slide-preview-wrapper";
+
+        // Cabecera superior de la lámina en la UI del editor
+        const labelBar = document.createElement("div");
+        labelBar.className = "slide-label-bar";
+        labelBar.innerHTML = `
+          <span>Lámina ${index + 1} (${slide.tipo.toUpperCase()})</span>
+          <span style="color:${slide.theme === 'dark' ? '#A98B63' : '#7C7361'}; font-weight:700;">${slide.theme === 'dark' ? 'OSCURO' : 'CLARO'}</span>
+        `;
+        itemWrap.appendChild(labelBar);
+
+        // Caja contenedora que recorta el 1080x1350 escalado a 0.3
+        const isCTAyt = slide.tipo === 'cta-yt';
+        const previewW = 324;
+        const previewH = isCTAyt ? 576 : 405;
+        const outerBox = document.createElement("div");
+        outerBox.className = "slide-outer-box";
+        outerBox.style.width = previewW + 'px';
+        outerBox.style.height = previewH + 'px';
+        outerBox.style.borderColor = accentColor + "33";
+
+        // Nodo real en tamaño 1080x1350 o 1080x1920
+        const realNode = document.createElement("div");
+        realNode.className = `slide-real-node slide-content theme-${slide.theme}`;
+        realNode.id = `slideNode-${index}`;
+        realNode.style.setProperty('--accent', accentColor);
+        realNode.style.setProperty('--accent-soft', hexToRgba(accentColor, 0.5));
+        realNode.style.setProperty('--accent-faint', hexToRgba(accentColor, 0.18));
+
+        // Rellenar estructura HTML de la lámina basándonos en el tipo
+        realNode.innerHTML = getSlideHtml(slide, index);
+
+        outerBox.appendChild(realNode);
+        itemWrap.appendChild(outerBox);
+        grid.appendChild(itemWrap);
+      });
+    }
+
+    // Generador de HTML para cada lámina a tamaño real 1080x1350
+    function getSlideHtml(slide, idx) {
+      const kickerText = slide.kicker || currentCarrusel.meta.kicker || "ESTOICISMO";
+      const handleText = currentCarrusel.meta.handle || "STOA · HOY";
+      const isDark = slide.theme === 'dark';
+
+      // Header superior común con estilos de fuente y separador
+      let headerHtml = `
+        <div class="slide-header">
+          <div class="slide-kicker">${kickerText}</div>
+          ${currentCarrusel.showNumbers ? `<div class="slide-number">${String(idx + 1).padStart(2, '0')} / ${String(currentCarrusel.slides.length).padStart(2, '0')}</div>` : ''}
+        </div>
+      `;
+
+      // Barra dorada superior obligatoria en portada
+      let topBarHtml = slide.tipo === 'portada' ? '<div class="slide-top-bar"></div>' : '';
+
+      // Footer inferior común
+      let footerHtml = `
+        <div class="slide-footer">
+          <div class="slide-handle">${handleText}</div>
+          ${(currentCarrusel.showDragHint && idx < currentCarrusel.slides.length - 1) ? `<div class="slide-drag-hint">${slide.cta || 'Desliza →'}</div>` : ''}
+        </div>
+      `;
+
+      let innerContent = "";
+
+      switch (slide.tipo) {
+        case "portada":
+          innerContent = `
+            ${topBarHtml}
+            ${headerHtml}
+            <div class="slide-portada-center">
+              <div class="slide-portada-column-container">
+                <!-- SVG de la columna griega exacta de la plantilla -->
+                <svg viewBox="0 0 100 240" style="width: 140px; height: 240px; fill: none; stroke: var(--accent); stroke-width: 2;">
+                  <rect x="15" y="200" width="70" height="20" fill="var(--accent-soft)"/>
+                  <rect x="20" y="180" width="60" height="20"/>
+                  <rect x="25" y="60" width="50" height="120"/>
+                  <line x1="35" y1="60" x2="35" y2="180" stroke="var(--accent-soft)"/>
+                  <line x1="45" y1="60" x2="45" y2="180" stroke="var(--accent-soft)"/>
+                  <line x1="55" y1="60" x2="55" y2="180" stroke="var(--accent-soft)"/>
+                  <line x1="65" y1="60" x2="65" y2="180" stroke="var(--accent-soft)"/>
+                  <path d="M 20 50 L 25 60 L 75 60 L 80 50 Z" fill="var(--accent-faint)"/>
+                  <rect x="20" y="40" width="60" height="12"/>
+                  <ellipse cx="50" cy="40" rx="32" ry="8" fill="none"/>
+                  <rect x="15" y="30" width="70" height="10" fill="var(--accent-faint)"/>
+                </svg>
+              </div>
+              <div class="slide-portada-divider"></div>
+              <h1 class="slide-portada-title">${formatTextBr(slide.titulo || "El concepto<br>estoico")}</h1>
+              <p class="slide-portada-subtitle">${formatTextBr(slide.subtitulo || "")}</p>
+            </div>
+            ${footerHtml}
+          `;
+          break;
+
+        case "cita":
+          innerContent = `
+            ${topBarHtml}
+            ${headerHtml}
+            <div class="slide-cita-center">
+              <div class="slide-quote-mark">“</div>
+              <blockquote class="slide-quote-text">${slide.cita || ""}</blockquote>
+              <div class="slide-quote-attribution">
+                — ${slide.atribucion || "Filósofo"}${slide.obra ? `, <span class="slide-quote-work">${slide.obra}</span>` : ''}
+              </div>
+            </div>
+            <div class="slide-footer" style="align-items:flex-end;">
+              <div class="slide-note-text">${slide.nota || ""}</div>
+              <div class="slide-handle" style="margin-bottom:6px;">${handleText}</div>
+            </div>
+          `;
+          break;
+
+        case "lista":
+        case "lista-negativa":
+          const isNeg = slide.tipo === "lista-negativa";
+          
+          let itemsHtml = "";
+          if (slide.items && slide.items.length) {
+            slide.items.forEach((item, num) => {
+              if (!item || !item.trim()) return;
+              const indexBullet = isNeg ? '✕' : String(num + 1).padStart(2, '0');
+              itemsHtml += `
+                <div class="slide-list-item">
+                  <span class="slide-list-num" style="color:var(--accent);">${indexBullet}</span>
+                  <span class="slide-list-text">${item}</span>
+                </div>
+              `;
+            });
+          }
+
+          innerContent = `
+            ${topBarHtml}
+            ${headerHtml}
+            <div class="slide-list-center">
+              <h2 class="slide-list-headline">${formatTextBr(slide.headline || "")}</h2>
+              <div class="slide-list-divider"></div>
+              <div class="slide-list-items">
+                ${itemsHtml}
+              </div>
+            </div>
+            <div class="slide-footer" style="align-items:flex-end;">
+              <div class="slide-note-text">${slide.nota || ""}</div>
+              <div class="slide-handle" style="margin-bottom:6px;">${handleText}</div>
+            </div>
+          `;
+          break;
+
+        case "reflexion":
+          innerContent = `
+            ${topBarHtml}
+            ${headerHtml}
+            <div class="slide-list-center">
+              <h2 class="slide-list-headline" style="margin-bottom:0;">${formatTextBr(slide.headline || "")}</h2>
+              <div class="slide-list-divider"></div>
+              <div class="slide-reflexion-cuerpo">${formatTextBr(slide.cuerpo || "")}</div>
+            </div>
+            <div class="slide-footer" style="align-items:flex-end;">
+              <div class="slide-note-text">${slide.nota || ""}</div>
+              <div class="slide-handle" style="margin-bottom:6px;">${handleText}</div>
+            </div>
+          `;
+          break;
+
+        case "practica":
+          innerContent = `
+            ${topBarHtml}
+            ${headerHtml}
+            <div class="slide-list-center">
+              <h2 class="slide-list-headline" style="margin-bottom:0; font-size: 80px;">${formatTextBr(slide.headline || "")}</h2>
+              <div class="slide-list-divider"></div>
+              <div class="slide-practica-question">${slide.pregunta || ""}</div>
+              <p class="slide-practica-instruction">${formatTextBr(slide.instruccion || "")}</p>
+            </div>
+            <div class="slide-footer" style="align-items:flex-end;">
+              <div class="slide-note-text">${slide.nota || ""}</div>
+              <div class="slide-handle" style="margin-bottom:6px;">${handleText}</div>
+            </div>
+          `;
+          break;
+
+        case "cta-ig":
+          const igHandle = slide.ig_handle || '@Stoa.Hoy';
+          const guardarTxt = slide.guardar_txt || 'Guarda este carrusel';
+          innerContent = `
+            <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#7A5C32 0%,#C9A96E 28%,#E8C987 50%,#C9A96E 72%,#7A5C32 100%);z-index:10;"></div>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 108px;">
+              <div style="font-family:var(--font-sans);font-size:28px;font-weight:600;letter-spacing:0.34em;text-transform:uppercase;color:var(--accent);margin-bottom:36px;position:absolute;top:104px;left:108px;">Para recordar</div>
+              <div style="font-size:200px;line-height:0.5;color:var(--accent);font-weight:600;height:80px;margin-bottom:40px;font-family:var(--font-display);">&#8220;</div>
+              <blockquote style="font-size:80px;font-weight:500;font-style:italic;line-height:1.18;letter-spacing:-0.01em;margin-bottom:44px;font-family:var(--font-display);">${slide.cita || ''}</blockquote>
+              <div style="font-family:var(--font-sans);font-size:32px;font-weight:500;letter-spacing:0.04em;color:var(--text-subtle);margin-bottom:72px;">— ${slide.atribucion || 'Filósofo'}</div>
+              <div style="display:flex;gap:24px;">
+                <div style="flex:1;border:1px solid rgba(169,139,99,0.35);padding:32px;display:flex;flex-direction:column;gap:16px;">
+                  <svg width='44' height='44' viewBox='0 0 24 24' fill='none'><path d='M5 3H19C19.5523 3 20 3.44772 20 4V21.2768C20 21.6173 19.6114 21.8265 19.3299 21.634L12 16.8689L4.67009 21.634C4.38858 21.8265 4 21.6173 4 21.2768V4C4 3.44772 4.44772 3 5 3Z' stroke='var(--text-main)' stroke-width='1.8' stroke-linejoin='round'></path></svg>
+                  <div style="font-family:var(--font-sans);font-size:32px;font-weight:700;color:var(--text-main);">${guardarTxt}</div>
+                  <div style="font-family:var(--font-sans);font-size:26px;color:var(--text-subtle);line-height:1.4;">Para volver cuando lo necesites.</div>
+                </div>
+                <div style="flex:1;background:rgba(169,139,99,0.07);border:1px solid rgba(169,139,99,0.35);padding:32px;display:flex;flex-direction:column;gap:16px;">
+                  <svg width='44' height='44' viewBox='0 0 24 24' fill='none'><circle cx='10' cy='8' r='4' stroke='var(--accent)' stroke-width='1.8'></circle><path d='M2 20C2 17.2386 5.58172 15 10 15' stroke='var(--accent)' stroke-width='1.8' stroke-linecap='round'></path><path d='M18 14V20M15 17H21' stroke='var(--accent)' stroke-width='1.8' stroke-linecap='round'></path></svg>
+                  <div style="font-family:var(--font-sans);font-size:32px;font-weight:700;color:var(--accent);">Sígueme en Instagram</div>
+                  <div style="font-family:var(--font-sans);font-size:30px;font-weight:600;color:#C9A96E;letter-spacing:0.06em;">${igHandle}</div>
+                </div>
+              </div>
+            </div>
+            <div style="position:absolute;bottom:64px;left:108px;font-family:var(--font-sans);font-size:22px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:rgba(169,139,99,0.4);">${handleText}</div>
+          `;
+          break;
+
+        case "cta-yt":
+          const ytIntro = slide.yt_intro || 'Si esto te hizo pensar,';
+          const ytSubline = slide.yt_subline || 'Cada día, una idea que cambia cómo ves el mundo.';
+          const ytHandle = slide.yt_handle || '@Stoa-Hoy';
+          innerContent = `
+            <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#7A5C32 0%,#C9A96E 28%,#E8C987 50%,#C9A96E 72%,#7A5C32 100%);z-index:10;"></div>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 108px;">
+              <div style="font-family:var(--font-sans);font-size:26px;font-weight:600;letter-spacing:0.48em;text-transform:uppercase;color:var(--accent);margin-bottom:72px;">${handleText}</div>
+              <div style="font-family:var(--font-display);font-size:50px;font-style:italic;font-weight:500;color:var(--text-subtle);margin-bottom:16px;line-height:1.2;">${ytIntro}</div>
+              <h1 style="font-family:var(--font-display);font-size:148px;font-weight:600;line-height:0.96;letter-spacing:-0.02em;color:var(--text-main);margin:0 0 48px;">SUSCRÍBETE</h1>
+              <div style="width:56px;height:3px;background:var(--accent);margin-bottom:44px;"></div>
+              <p style="font-family:var(--font-display);font-size:52px;font-style:italic;font-weight:500;color:var(--text-sub);line-height:1.35;max-width:820px;margin-bottom:80px;">${ytSubline}</p>
+              <div>
+                <div style="font-family:var(--font-sans);font-size:36px;font-weight:600;letter-spacing:0.16em;color:var(--accent);">${ytHandle}</div>
+                <div style="font-family:var(--font-sans);font-size:26px;color:var(--text-muted);letter-spacing:0.04em;margin-top:12px;">YouTube · Estoicismo diario</div>
+              </div>
+            </div>
+          `;
+          break;
+
+        case "cierre":
+          const ctaVal = slide.cta_ig || "Sígueme para estoicismo cada día";
+          innerContent = `
+            ${topBarHtml}
+            ${headerHtml}
+            <div class="slide-cierre-center">
+              <div class="slide-quote-mark">“</div>
+              <blockquote class="slide-cierre-quote">${slide.cita || ""}</blockquote>
+              <div class="slide-cierre-attribution">
+                — ${slide.atribucion || "Filósofo"}${slide.obra ? `, <span class="slide-quote-work">${slide.obra}</span>` : ''}
+              </div>
+            </div>
+            
+            <div class="slide-cierre-panel">
+              <div class="slide-cierre-cta">${ctaVal}</div>
+              <div class="slide-cierre-links">
+                <span class="slide-cierre-link-ig">Instagram · @Stoa.Hoy</span>
+                <span class="slide-cierre-link-yt">YouTube · @Stoa-Hoy</span>
+              </div>
+            </div>
+          `;
+          break;
+      }
+
+      return innerContent;
+    }
+
+    // Helper: reemplaza \n por <br> y procesa saltos
+    function formatTextBr(text) {
+      if (!text) return "";
+      return text.replace(/\n/g, "<br>");
+    }
+
+    // Helper para convertir hex a rgba
+    function hexToRgba(hex, alpha) {
+      hex = hex.replace('#', '');
+      let r = parseInt(hex.substring(0, 2), 16);
+      let g = parseInt(hex.substring(2, 4), 16);
+      let b = parseInt(hex.substring(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    // ── MODAL JSON (IMPORTAR / EXPORTAR) ──
+    function openImportModal() {
+      document.getElementById("modalTitle").innerText = "Importar JSON de Carrusel";
+      document.getElementById("jsonTextArea").value = "";
+      document.getElementById("jsonTextArea").placeholder = "Pega aquí el contenido JSON del carrusel...";
+      document.getElementById("modalActionBtn").innerText = "Importar";
+      document.getElementById("modalActionBtn").onclick = applyJsonImport;
+      document.getElementById("jsonModal").style.display = "flex";
+    }
+
+    function closeJsonModal() {
+      document.getElementById("jsonModal").style.display = "none";
+    }
+
+    // Importar JSON pegado
+    function applyJsonImport() {
+      const rawText = document.getElementById("jsonTextArea").value.trim();
+      if (!rawText) return;
+
+      try {
+        const parsed = JSON.parse(rawText);
+        
+        // Validar estructura básica
+        if (!parsed.slides || !Array.isArray(parsed.slides)) {
+          alert("Error: El JSON debe contener un arreglo de 'slides'.");
+          return;
+        }
+
+        // Cargar
+        currentCarrusel = {
+          meta: parsed.meta || { kicker: "Estoicismo", handle: "STOA · HOY", tema: "", subtema: "" },
+          accentColor: parsed.accentColor || "#A98B63",
+          showNumbers: parsed.showNumbers !== false,
+          showDragHint: parsed.showDragHint !== false,
+          platform: parsed.platform || 'instagram',
+          slides: parsed.slides,
+          seo: parsed.seo || { yt: {}, ig: {} }
+        };
+
+        // Si los slides importados no tienen la propiedad 'theme', asignársela
+        currentCarrusel.slides.forEach(s => {
+          if (!s.theme) {
+            s.theme = (s.tipo === 'portada' || s.tipo === 'cierre' || s.tipo === 'lista-negativa') ? 'dark' : 'light';
+          }
+        });
+
+        activeAccordionIndex = 0;
+        loadFormData();
+        updateMeta();
+        renderSlideEditors();
+        renderPreviews();
+        closeJsonModal();
+        alert("¡JSON cargado correctamente!");
+      } catch (err) {
+        alert("Error al parsear el JSON: " + err.message);
+      }
+    }
+
+    // Exportar JSON y descargar
+    function exportJsonFile() {
+      const jsonStr = JSON.stringify(currentCarrusel, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      
+      const temaClean = (currentCarrusel.meta.tema || "carrusel")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      const filename = `carrusel-${temaClean}.json`;
+      
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+
+    // ── EXPORTACIÓN DE IMÁGENES PNG (HTML2CANVAS) ──
+    async function exportPngs() {
+      if (!window.html2canvas) {
+        alert("La librería html2canvas no está disponible. Conéctate a internet para cargarla.");
+        return;
+      }
+
+      const overlay = document.getElementById("progressOverlay");
+      const progressText = document.getElementById("progressText");
+      
+      overlay.style.display = "flex";
+      
+      const totalSlides = currentCarrusel.slides.length;
+      
+      // Procesar cada lámina secuencialmente para evitar sobrecargar la memoria
+      for (let i = 0; i < totalSlides; i++) {
+        progressText.innerText = `Renderizando lámina ${i + 1} de ${totalSlides}...`;
+        
+        // Obtenemos el nodo real a 1080x1350
+        const realNode = document.getElementById(`slideNode-${i}`);
+        
+        // Hacemos una pausa breve para que el navegador procese el render
+        await new Promise(r => setTimeout(r, 300));
+
+        // Seleccionamos el color de fondo y dimensiones para pasárselo a html2canvas
+        const isDark = currentCarrusel.slides[i].theme === 'dark';
+        const bgColor = isDark ? '#1A1714' : '#F6F2EA';
+        const isYtCTA = currentCarrusel.slides[i].tipo === 'cta-yt';
+        const exportW = 1080;
+        const exportH = isYtCTA ? 1920 : 1350;
+
+        // CLONAMOS EL NODO para quitarle la transformación de escala antes de la captura
+        const clone = realNode.cloneNode(true);
+        clone.style.transform = "none";
+        clone.style.position = "relative";
+        clone.style.top = "0";
+        clone.style.left = "0";
+        clone.style.width = exportW + 'px';
+        clone.style.height = exportH + 'px';
+        
+        // Creamos un contenedor oculto para renderizar el clon a tamaño real
+        const tempContainer = document.createElement("div");
+        tempContainer.style.position = "fixed";
+        tempContainer.style.top = "-9999px";
+        tempContainer.style.left = "-9999px";
+        tempContainer.style.width = exportW + 'px';
+        tempContainer.style.height = exportH + 'px';
+        tempContainer.style.overflow = "hidden";
+        tempContainer.appendChild(clone);
+        document.body.appendChild(tempContainer);
+
+        // Captura con html2canvas sobre el clon a escala real (sin escala transform)
+        const canvas = await html2canvas(clone, {
+          width: exportW,
+          height: exportH,
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          logging: false,
+          backgroundColor: bgColor,
+          imageTimeout: 0,
+          removeContainer: true
+        });
+
+        // Eliminar el contenedor temporal del DOM
+        document.body.removeChild(tempContainer);
+
+        // Crear canvas secundario para asegurar resolución exacta
+        const outCanvas = document.createElement('canvas');
+        outCanvas.width = exportW;
+        outCanvas.height = exportH;
+        const ctx = outCanvas.getContext('2d');
+        ctx.drawImage(canvas, 0, 0, exportW, exportH);
+
+        // Convertir y descargar
+        await new Promise(resolve => {
+          outCanvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            
+            const temaClean = (currentCarrusel.meta.tema || "stoa")
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-+|-+$/g, "");
+            const slideType = currentCarrusel.slides[i].tipo;
+            a.download = `stoa-hoy-${temaClean}-${String(i + 1).padStart(2, '0')}-${slideType}.png`;
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            setTimeout(() => URL.revokeObjectURL(url), 2000);
+            resolve();
+          }, 'image/png');
+        });
+
+        // Pausa entre descargas para estabilidad en navegadores móviles/escritorio
+        await new Promise(r => setTimeout(r, 1000));
+      }
+
+      progressText.innerText = "¡Todo exportado con éxito!";
+      setTimeout(() => {
+        overlay.style.display = "none";
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

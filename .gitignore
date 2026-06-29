@@ -1,0 +1,17 @@
+# System/OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor/IDE configs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Agent/Temp files
+.antigravityignore
+.gemini/

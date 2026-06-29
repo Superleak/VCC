@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "kicker": "Estoicismo · Epicteto",
+    "handle": "STOA · HOY",
+    "tema": "Dicotomía del Control",
+    "subtema": "El arte estoico de la verdadera libertaddddd"
+  },
+  "slides": [
+    {
+      "id": 1,
+      "tipo": "portada",
+      "kicker": "Estoicismo · Epicteto",
+      "titulo": "Control\no Caos",
+      "subtitulo": "El arte estoico de la verdadera libertad",
+      "cta": "Desliza →"
+    },
+    {
+      "id": 2,
+      "tipo": "cita",
+      "kicker": "El principio",
+      "cita": "De las cosas que existen, algunas dependen de nosotros y otras no dependen de nosotros.",
+      "atribucion": "Epicteto",
+      "obra": "Enquiridión",
+      "nota": "No nació en un palacio: Epicteto pasó la mitad de su vida como esclavo antes de poder enseñar libertad."
+    },
+    {
+      "id": 3,
+      "tipo": "lista",
+      "kicker": "Bajo tu control",
+      "headline": "Tu zona de poder.\nNada más.",
+      "items": [
+        "Tus opiniones y juicios sobre las cosas",
+        "Tus deseos y lo que decides rechazar",
+        "Tus propias acciones y respuestas",
+        "El esfuerzo que pones en este momento"
+      ],
+      "nota": "Aquí es donde se define tu virtud. Tu energía pertenece solo a este espacio."
+    },
+    {
+      "id": 4,
+      "tipo": "lista-negativa",
+      "kicker": "Fuera de tu control",
+      "headline": "Lo que debes soltar",
+      "items": [
+        "Las acciones y opiniones de los demás",
+        "El resultado final de tus esfuerzos",
+        "Tu reputación o lo que dicen de ti",
+        "El pasado, el futuro y el clima"
+      ],
+      "nota": "Preocuparse por esto es otorgarle el control de tu felicidad a factores externos."
+    },
+    {
+      "id": 5,
+      "tipo": "reflexion",
+      "kicker": "El error",
+      "headline": "Sufres por lo que no puedes cambiar",
+      "cuerpo": "Inviertes noches de insomnio intentando controlar el tráfico, la economía o el humor de tu jefe. Mientras desgastas tu mente en lo inalterable, descuidas lo único que sí puedes moldear: tu propia mente.",
+      "nota": "La ansiedad nace cuando intentas controlar lo que no depende de ti."
+    },
+    {
+      "id": 6,
+      "tipo": "reflexion",
+      "kicker": "La estrategia",
+      "headline": "Controla el esfuerzo, acepta el resultado.",
+      "cuerpo": "El arquero estoico hace todo lo que está en su mano para apuntar bien: entrena, cuida su arco y mide el viento. Pero una vez que la flecha vuela, acepta con serenidad si una ráfaga de viento la desvía. El éxito real estuvo en el tiro.",
+      "nota": "El estoico juega para dar lo mejor de sí, no obsesionado con el marcador."
+    },
+    {
+      "id": 7,
+      "tipo": "practica",
+      "kicker": "Práctica de hoy",
+      "headline": "Haz el filtro estoico",
+      "pregunta": "«Esto que me preocupa ahora mismo, ¿depende de mí o no depende de mí?»",
+      "instruccion": "Si depende de ti, actúa con excelencia ahora. Si no depende de ti, di conscientemente: 'Esto no es nada para mí' y déjalo ir.",
+      "nota": "No es indiferencia. Es gestionar tu energía con precisión militar."
+    },
+    {
+      "id": 8,
+      "tipo": "cierre",
+      "kicker": "Para recordar",
+      "cita": "Ninguna persona es libre si no es dueña de sí misma.",
+      "atribucion": "Epicteto",
+      "obra": "Disertaciones",
+      "cta_ig": "Sígueme en Instagram",
+      "handle_ig": "Instagram · @Stoa.Hoy",
+      "handle_yt": "YouTube · @Stoa-Hoy"
+    }
+  ],
+  "seo": {
+    "yt": {
+      "titulo": "Dicotomía del Control: la regla de oro estoica para eliminar la ansiedad (Epicteto)",
+      "descripcion": "¿Y si la mayor parte de tu sufrimiento diario viniera de intentar controlar lo incontrolable? Epicteto, que pasó de esclavo a uno de los filósofos más influyentes de la historia, dejó una regla de oro infalible para alcanzar la paz mental.\n\nEn este video desglosamos la Dicotomía del Control: qué está en tus manos, qué debes soltar hoy mismo y cómo aplicar este filtro mental en tu rutina.\n\n━━━━━━━━━━━━━━━━\nCITA DEL VIDEO\n━━━━━━━━━━━━━━━━\n«De las cosas que existen, algunas dependen de nosotros y otras no dependen de nosotros.»\n— Epicteto, Enquiridión\n\n▶ Instagram: @Stoa.Hoy\n▶ YouTube: @Stoa-Hoy",
+      "tags": "estoicismo, dicotomia del control, epicteto, filosofia estoica, stoicism, desarrollopersonal, ansiedad, paz mental, autocontrol, filosofia, habitosmentales, crecimientopersonal, sabiduria, mentalidad"
+    },
+    "ig": {
+      "caption": "¿Cuánta energía pierdes al día intentando cambiar cosas que no dependen de ti?\n\nEpicteto lo tenía claro: la verdadera libertad y la paz mental empiezan el día que trazas una línea divisoria impecable entre tu zona de poder y el resto del mundo.\n\nLo que los demás piensen, los imprevistos o el pasado no están bajo tu control. Tu respuesta, tu esfuerzo y tu juicio actual, sí.\n\nFiltra tus preocupaciones antes de que ellas te filtren a ti.\n\nGuarda este carrusel para cuando sientas que el caos te supera. 📌\n\n¿Qué es lo que más te cuesta sueltar hoy? Te leo abajo 👇\n\n· · ·\n\n#estoicismo #epicteto #dicotomiadelcontrol #filosofiaestoica #desarrollopersonal #pazmental #sabiduria #mentalidad #autocontrol #filosofia #habitosmentales",
+      "primerComentario": "#estoicismo #epicteto #dicotomiadelcontrol #stoicism #filosofia #desarrollopersonal #mindset #estoico #stoic #bienestar #saludmental #crecimientopersonal #reflexion #sabiduria #inteligenciaemocional #control #mentalidad #autocontrol #filosofiaestoica #habitosmentales"
+    }
+  }
+}

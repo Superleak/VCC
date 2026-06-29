@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #D8D4CB; }
+</style>
+</helmet>
+
+<div style="padding: 56px; background: #D8D4CB; min-height: 100vh; font-family: 'Hanken Grotesk', sans-serif;">
+
+  <!-- Cabecera -->
+  <div style="margin-bottom: 48px;">
+    <div style="font-size: 13px; letter-spacing: 0.34em; text-transform: uppercase; color: #8A8170; font-weight: 600;">Plantilla · Reutilizable</div>
+    <div style="font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: #26221C; margin-top: 8px;">CTA Final — Instagram + YouTube</div>
+    <div style="font-size: 14px; color: #8A8170; margin-top: 4px;">Edita los textos desde el panel Tweaks · Exporta cada imagen como PNG</div>
+  </div>
+
+  <!-- Frames lado a lado -->
+  <div style="display: flex; gap: 80px; align-items: flex-start; flex-wrap: wrap;">
+
+    <!-- ══════════════ INSTAGRAM 1080×1350 ══════════════ -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; width: 540px;">
+        <div>
+          <div style="font-size: 16px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #5C5544;">Instagram</div>
+          <div style="font-size: 13px; color: #8A8170; margin-top: 3px;">1080 × 1350 · 4:5</div>
+        </div>
+        <button onClick="{{ exportIg }}" style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; background: #A98B63; color: #FAF8F3; border: none; padding: 12px 24px; border-radius: 2px; cursor: pointer;">{{ labelIg }}</button>
+      </div>
+
+      <!-- Frame escalado al 50% -->
+      <div style="transform-origin: top left; transform: scale(0.5); width: 1080px; height: 1350px; margin-bottom: -675px;">
+        <div data-screen-label="Instagram CTA" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 28px 80px rgba(0,0,0,0.28); background: {{ frameBg }}; color: {{ frameText }}; font-family: 'Cormorant Garamond', serif;">
+
+          <!-- Barra dorada -->
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #7A5C32 0%, #C9A96E 28%, #E8C987 50%, #C9A96E 72%, #7A5C32 100%); z-index: 10;"></div>
+
+          <!-- Contenido -->
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 108px;">
+
+            <!-- Kicker -->
+            <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 28px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: #A98B63; margin-bottom: 36px; position: absolute; top: 104px; left: 108px;">Para recordar</div>
+
+            <!-- Comilla apertura -->
+            <div style="font-size: 200px; line-height: 0.5; color: #A98B63; font-weight: 600; height: 80px; margin-bottom: 40px;">"</div>
+
+            <!-- Cita -->
+            <blockquote style="font-size: 80px; font-weight: 500; font-style: italic; line-height: 1.18; letter-spacing: -0.01em; text-wrap: pretty; margin-bottom: 44px;">{{ quote }}</blockquote>
+
+            <!-- Atribución -->
+            <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 32px; font-weight: 500; letter-spacing: 0.04em; color: #B8AF9C; margin-bottom: 72px;">— {{ attribution }}</div>
+
+            <!-- Tarjetas -->
+            <div style="display: flex; gap: 24px;">
+              <div style="flex: 1; border: 1px solid rgba(169,139,99,0.35); padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M5 3H19C19.5523 3 20 3.44772 20 4V21.2768C20 21.6173 19.6114 21.8265 19.3299 21.634L12 16.8689L4.67009 21.634C4.38858 21.8265 4 21.6173 4 21.2768V4C4 3.44772 4.44772 3 5 3Z" stroke="#EDE6D8" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+                <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #EDE6D8;">Guarda este video</div>
+                <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 26px; color: #B8AF9C; line-height: 1.4;">Para volver cuando sientas que perdiste el control.</div>
+              </div>
+              <div style="flex: 1; background: rgba(169,139,99,0.07); border: 1px solid rgba(169,139,99,0.35); padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><circle cx="10" cy="8" r="4" stroke="#A98B63" stroke-width="1.8"></circle><path d="M2 20C2 17.2386 5.58172 15 10 15" stroke="#A98B63" stroke-width="1.8" stroke-linecap="round"></path><path d="M18 14V20M15 17H21" stroke="#A98B63" stroke-width="1.8" stroke-linecap="round"></path></svg>
+                <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #A98B63;">Sígueme en Instagram</div>
+                <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 30px; font-weight: 600; color: #C9A96E; letter-spacing: 0.06em;">@Stoa.Hoy</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Watermark -->
+          <div style="position: absolute; bottom: 64px; left: 108px; font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(169,139,99,0.4);">STOA · HOY</div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ YOUTUBE SHORTS 1080×1920 ══════════════ -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; width: 540px;">
+        <div>
+          <div style="font-size: 16px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #5C5544;">YouTube Shorts</div>
+          <div style="font-size: 13px; color: #8A8170; margin-top: 3px;">1080 × 1920 · 9:16</div>
+        </div>
+        <button onClick="{{ exportYt }}" style="font-family: 'Hanken Grotesk', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; background: #A98B63; color: #FAF8F3; border: none; padding: 12px 24px; border-radius: 2px; cursor: pointer;">{{ labelYt }}</button>
+      </div>
+
+      <!-- Frame escalado al 28% para que entre verticalmente -->
+      <div style="transform-origin: top left; transform: scale(0.5); width: 1080px; height: 1920px; margin-bottom: -960px;">
+        <div data-screen-label="YouTube CTA" style="position: relative; width: 1080px; height: 1920px; overflow: hidden; border-radius: 2px; box-shadow: 0 28px 80px rgba(0,0,0,0.28); background: {{ frameBg }}; color: {{ frameText }}; font-family: 'Cormorant Garamond', serif;">
+
+          <!-- Barra dorada -->
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #7A5C32 0%, #C9A96E 28%, #E8C987 50%, #C9A96E 72%, #7A5C32 100%); z-index: 10;"></div>
+
+          <!-- Contenido centrado -->
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 108px;">
+
+            <!-- Wordmark -->
+            <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 26px; font-weight: 600; letter-spacing: 0.48em; text-transform: uppercase; color: #A98B63; margin-bottom: 72px;">STOA · HOY</div>
+
+            <!-- Intro -->
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 50px; font-style: italic; font-weight: 500; color: #B8AF9C; margin-bottom: 16px; line-height: 1.2;">{{ ytIntro }}</div>
+
+            <!-- Headline -->
+            <h1 style="font-family: 'Cormorant Garamond', serif; font-size: 148px; font-weight: 600; line-height: 0.96; letter-spacing: -0.02em; color: #EDE6D8; margin: 0 0 48px;">SUSCRÍBETE</h1>
+
+            <!-- Divisor -->
+            <div style="width: 56px; height: 3px; background: #A98B63; margin-bottom: 44px;"></div>
+
+            <!-- Subline -->
+            <p style="font-family: 'Cormorant Garamond', serif; font-size: 52px; font-style: italic; font-weight: 500; color: #DCD4C4; line-height: 1.35; text-wrap: pretty; max-width: 820px; margin-bottom: 80px;">{{ ytSubline }}</p>
+
+            <!-- Handle -->
+            <div>
+              <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 36px; font-weight: 600; letter-spacing: 0.16em; color: #A98B63;">@Stoa-Hoy</div>
+              <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 26px; color: #6A6358; letter-spacing: 0.04em; margin-top: 12px;">YouTube · Estoicismo diario</div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;bgColor&quot;: {
+    &quot;editor&quot;: &quot;color&quot;,
+    &quot;default&quot;: &quot;#1A1714&quot;,
+    &quot;options&quot;: [&quot;#1A1714&quot;, &quot;#000000&quot;, &quot;#0E0D0B&quot;, &quot;#F6F2EA&quot;],
+    &quot;tsType&quot;: &quot;string&quot;,
+    &quot;section&quot;: &quot;Fondo&quot;
+  },
+  &quot;quote&quot;: {
+    &quot;editor&quot;: &quot;text&quot;,
+    &quot;default&quot;: &quot;Haré esto — salvo que el destino lo impida.&quot;,
+    &quot;tsType&quot;: &quot;string&quot;,
+    &quot;section&quot;: &quot;Instagram&quot;
+  },
+  &quot;attribution&quot;: {
+    &quot;editor&quot;: &quot;text&quot;,
+    &quot;default&quot;: &quot;Epicteto, Enquiridión&quot;,
+    &quot;tsType&quot;: &quot;string&quot;,
+    &quot;section&quot;: &quot;Instagram&quot;
+  },
+  &quot;ytIntro&quot;: {
+    &quot;editor&quot;: &quot;text&quot;,
+    &quot;default&quot;: &quot;Si esto te hizo pensar,&quot;,
+    &quot;tsType&quot;: &quot;string&quot;,
+    &quot;section&quot;: &quot;YouTube&quot;
+  },
+  &quot;ytSubline&quot;: {
+    &quot;editor&quot;: &quot;text&quot;,
+    &quot;default&quot;: &quot;Cada día, una idea que cambia cómo ves el mundo.&quot;,
+    &quot;tsType&quot;: &quot;string&quot;,
+    &quot;section&quot;: &quot;YouTube&quot;
+  }
+}">
+class Component extends DCLogic {
+  state = { exportingIg: false, exportingYt: false };
+
+  async _exportFrame(selector, filename, width, height) {
+    if (!window.html2canvas) {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    const el = document.querySelector(selector);
+    if (!el) return;
+
+    // Quitar el transform del wrapper escalado temporalmente
+    const wrapper = el.parentElement;
+    const prevTransform  = wrapper.style.transform;
+    const prevMargin     = wrapper.style.marginBottom;
+    const prevWidth      = wrapper.style.width;
+    const prevHeight     = wrapper.style.height;
+    wrapper.style.transform   = 'none';
+    wrapper.style.marginBottom = '0';
+    wrapper.style.width        = width + 'px';
+    wrapper.style.height       = height + 'px';
+    wrapper.style.position     = 'fixed';
+    wrapper.style.top          = '-99999px';
+    wrapper.style.left         = '0';
+
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    const canvas = await window.html2canvas(el, {
+      width, height, scale: 2,
+      useCORS: true, allowTaint: false,
+      logging: false, imageTimeout: 0, removeContainer: true
+    });
+
+    // Restaurar
+    wrapper.style.transform    = prevTransform;
+    wrapper.style.marginBottom = prevMargin;
+    wrapper.style.width        = prevWidth;
+    wrapper.style.height       = prevHeight;
+    wrapper.style.position     = '';
+    wrapper.style.top          = '';
+    wrapper.style.left         = '';
+
+    const out = document.createElement('canvas');
+    out.width = width; out.height = height;
+    out.getContext('2d').drawImage(canvas, 0, 0, width, height);
+    await new Promise(resolve => {
+      out.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 3000);
+        resolve();
+      }, 'image/png');
+    });
+  }
+
+  async exportIg() {
+    if (this.state.exportingIg) return;
+    this.setState({ exportingIg: true });
+    await this._exportFrame('[data-screen-label="Instagram CTA"]', 'stoa-hoy-cta-instagram.png', 1080, 1350);
+    this.setState({ exportingIg: false });
+  }
+
+  async exportYt() {
+    if (this.state.exportingYt) return;
+    this.setState({ exportingYt: true });
+    await this._exportFrame('[data-screen-label="YouTube CTA"]', 'stoa-hoy-cta-youtube.png', 1080, 1920);
+    this.setState({ exportingYt: false });
+  }
+
+  renderVals() {
+    const { exportingIg, exportingYt } = this.state;
+    const bg = this.props.bgColor ?? '#1A1714';
+    const isLight = bg === '#F6F2EA' || bg === '#ECE6DA' || bg === '#F6F2EA';
+    const frameBg = bg === '#1A1714'
+      ? 'radial-gradient(125% 85% at 50% 10%, #25221B 0%, #1A1714 68%, #131210 100%)'
+      : bg === '#F6F2EA'
+      ? 'radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%)'
+      : bg;
+    const frameText = isLight ? '#26221C' : '#EDE6D8';
+    return {
+      quote:       this.props.quote       ?? 'Haré esto — salvo que el destino lo impida.',
+      attribution: this.props.attribution ?? 'Epicteto, Enquiridión',
+      ytIntro:     this.props.ytIntro     ?? 'Si esto te hizo pensar,',
+      ytSubline:   this.props.ytSubline   ?? 'Cada día, una idea que cambia cómo ves el mundo.',
+      frameBg,
+      frameText,
+      exportIg:    () => this.exportIg(),
+      exportYt:    () => this.exportYt(),
+      labelIg:     exportingIg ? 'Exportando…' : 'Exportar PNG ↓',
+      labelYt:     exportingYt ? 'Exportando…' : 'Exportar PNG ↓',
+    };
+  }
+}
+</script>
+</body>
+</html>

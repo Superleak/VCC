@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #D8D4CB; }
+</style>
+</helmet>
+
+<div style="--accent: {{ accent }}; width: max-content; min-width: 100%; min-height: 100vh; box-sizing: border-box; padding: 56px; background: #D8D4CB; font-family: 'Hanken Grotesk', sans-serif;">
+
+  <div style="margin-bottom: 40px; max-width: 1080px;">
+    <div style="font-size: 13px; letter-spacing: 0.34em; text-transform: uppercase; color: #8A8474; font-weight: 600;">Carrusel · Instagram 4:5</div>
+    <div style="font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: #2A251E; margin-top: 8px;">La dicotomía del control</div>
+    <div style="font-size: 14px; color: #8A8474; margin-top: 4px;">8 láminas · 1080 × 1350 px · @Stoa.Hoy</div>
+  </div>
+
+  <div style="display: flex; gap: 56px; align-items: flex-start;">
+
+    <!-- ============ 01 · PORTADA ============ -->
+    <div style="flex: none;">
+      <div style="margin-bottom: 18px; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E6858; font-weight: 600;">01 · Portada</div>
+      <div data-screen-label="01 Portada" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 22px 70px rgba(0,0,0,0.18); background: radial-gradient(125% 85% at 50% 8%, #25221B 0%, #1A1714 68%, #131210 100%); color: #EDE6D8; font-family: 'Cormorant Garamond', serif; padding: 100px 96px; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent, #A98B63);">Estoicismo · Epicteto</div>
+          <sc-if value="{{ showNumbers }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.25em; color: #8C8472;">01 / 08</div></sc-if>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+          <div style="width: 340px; height: 430px; border: 1px solid rgba(169,139,99,0.5); background-image: repeating-linear-gradient(135deg, rgba(237,230,216,0.05) 0px, rgba(237,230,216,0.05) 2px, transparent 2px, transparent 11px); display: flex; align-items: center; justify-content: center; margin-bottom: 56px;">
+            <svg viewBox="0 0 100 240" style="width: 140px; height: 240px; fill: none; stroke: rgba(169,139,99,0.7); stroke-width: 2;">
+              <!-- Base -->
+              <rect x="15" y="200" width="70" height="20" fill="rgba(169,139,99,0.3)"/>
+              <!-- Plinto -->
+              <rect x="20" y="180" width="60" height="20"/>
+              <!-- Columna - fuste estriado -->
+              <rect x="25" y="60" width="50" height="120"/>
+              <line x1="35" y1="60" x2="35" y2="180" stroke="rgba(169,139,99,0.5)"/>
+              <line x1="45" y1="60" x2="45" y2="180" stroke="rgba(169,139,99,0.5)"/>
+              <line x1="55" y1="60" x2="55" y2="180" stroke="rgba(169,139,99,0.5)"/>
+              <line x1="65" y1="60" x2="65" y2="180" stroke="rgba(169,139,99,0.5)"/>
+              <!-- Capitel -->
+              <path d="M 20 50 L 25 60 L 75 60 L 80 50 Z" fill="rgba(169,139,99,0.2)"/>
+              <rect x="20" y="40" width="60" height="12"/>
+              <ellipse cx="50" cy="40" rx="32" ry="8" fill="none"/>
+              <!-- Ábaco -->
+              <rect x="15" y="30" width="70" height="10" fill="rgba(169,139,99,0.15)"/>
+            </svg>
+          </div>
+          <div style="width: 56px; height: 2px; background: var(--accent, #A98B63); margin-bottom: 34px;"></div>
+          <h1 style="font-size: 116px; font-weight: 600; line-height: 0.98; letter-spacing: -0.01em; text-wrap: balance;">La dicotomía<br>del control</h1>
+          <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 27px; font-weight: 400; color: #B8AF9C; margin-top: 32px; letter-spacing: 0.02em; max-width: 640px; line-height: 1.5;">El principio que separa la serenidad del sufrimiento</p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.2em; color: #C9C0AD;">STOA · HOY</div>
+          <sc-if value="{{ showDragHint }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent, #A98B63);">Desliza →</div></sc-if>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 02 · PRINCIPIO / CITA ============ -->
+    <div style="flex: none;">
+      <div style="margin-bottom: 18px; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E6858; font-weight: 600;">02 · El principio</div>
+      <div data-screen-label="02 Cita" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 22px 70px rgba(0,0,0,0.18); background: radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%); color: #26221C; font-family: 'Cormorant Garamond', serif; padding: 100px 96px; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent, #A98B63);">El principio</div>
+          <sc-if value="{{ showNumbers }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.25em; color: #A39A86;">02 / 08</div></sc-if>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+          <div style="font-size: 130px; line-height: 0.6; color: var(--accent, #A98B63); font-weight: 600; height: 60px;">“</div>
+          <blockquote style="font-size: 76px; font-weight: 500; line-height: 1.12; letter-spacing: -0.01em; text-wrap: pretty;">Hay cosas que dependen de nosotros y cosas que no dependen de nosotros.</blockquote>
+          <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 24px; font-weight: 500; letter-spacing: 0.04em; color: #7C7361; margin-top: 48px;">— Epicteto, <span style="font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 30px;">Enquiridión</span></div>
+        </div>
+
+        <div style="position: absolute; bottom: 56px; left: 96px; font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(169,139,99,0.42);">STOA · HOY</div>
+        <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; letter-spacing: 0.04em; color: #8A8170; line-height: 1.5; max-width: 720px;">Toda la filosofía estoica empieza aquí: en aprender a distinguir, con honestidad, dónde termina tu poder.</div>
+      </div>
+    </div>
+
+    <!-- ============ 03 · DEPENDE DE TI ============ -->
+    <div style="flex: none;">
+      <div style="margin-bottom: 18px; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E6858; font-weight: 600;">03 · Depende de ti</div>
+      <div data-screen-label="03 Depende de ti" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 22px 70px rgba(0,0,0,0.18); background: radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%); color: #26221C; font-family: 'Cormorant Garamond', serif; padding: 100px 96px; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent, #A98B63);">Depende de ti</div>
+          <sc-if value="{{ showNumbers }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.25em; color: #A39A86;">03 / 08</div></sc-if>
+        </div>
+
+        <div style="margin-top: 48px;">
+          <h2 style="font-size: 82px; font-weight: 600; line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance;">Lo que está<br>en tu poder</h2>
+          <div style="width: 56px; height: 2px; background: var(--accent, #A98B63); margin-top: 36px;"></div>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0;">
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 26px 0; border-bottom: 1px solid rgba(124,115,97,0.22);"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">01</span><span style="font-size: 46px; font-weight: 500;">Tus juicios y opiniones</span></div>
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 26px 0; border-bottom: 1px solid rgba(124,115,97,0.22);"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">02</span><span style="font-size: 46px; font-weight: 500;">Tus deseos y aversiones</span></div>
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 26px 0; border-bottom: 1px solid rgba(124,115,97,0.22);"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">03</span><span style="font-size: 46px; font-weight: 500;">Tus propias acciones</span></div>
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 26px 0;"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">04</span><span style="font-size: 46px; font-weight: 500;">Tu actitud ante lo que ocurre</span></div>
+        </div>
+
+        <div style="position: absolute; bottom: 56px; left: 96px; font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(169,139,99,0.42);">STOA · HOY</div>
+        <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; letter-spacing: 0.04em; color: #8A8170; line-height: 1.5;">Aquí, y solo aquí, eres verdaderamente libre.</div>
+      </div>
+    </div>
+
+    <!-- ============ 04 · NO DEPENDE DE TI ============ -->
+    <div style="flex: none;">
+      <div style="margin-bottom: 18px; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E6858; font-weight: 600;">04 · No depende de ti</div>
+      <div data-screen-label="04 No depende de ti" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 22px 70px rgba(0,0,0,0.18); background: radial-gradient(125% 85% at 50% 10%, #25221B 0%, #1A1714 68%, #131210 100%); color: #EDE6D8; font-family: 'Cormorant Garamond', serif; padding: 100px 96px; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent, #A98B63);">No depende de ti</div>
+          <sc-if value="{{ showNumbers }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.25em; color: #8C8472;">04 / 08</div></sc-if>
+        </div>
+
+        <div style="margin-top: 48px;">
+          <h2 style="font-size: 82px; font-weight: 600; line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance;">Lo que escapa<br>a tu poder</h2>
+          <div style="width: 56px; height: 2px; background: var(--accent, #A98B63); margin-top: 36px;"></div>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 24px 0; border-bottom: 1px solid rgba(237,230,216,0.14);"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">01</span><span style="font-size: 46px; font-weight: 500; color: #DCD4C4;">El cuerpo y la salud</span></div>
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 24px 0; border-bottom: 1px solid rgba(237,230,216,0.14);"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">02</span><span style="font-size: 46px; font-weight: 500; color: #DCD4C4;">La riqueza y los bienes</span></div>
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 24px 0; border-bottom: 1px solid rgba(237,230,216,0.14);"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">03</span><span style="font-size: 46px; font-weight: 500; color: #DCD4C4;">La reputación y la fama</span></div>
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 24px 0; border-bottom: 1px solid rgba(237,230,216,0.14);"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">04</span><span style="font-size: 46px; font-weight: 500; color: #DCD4C4;">La opinión de los demás</span></div>
+          <div style="display: flex; align-items: baseline; gap: 28px; padding: 24px 0;"><span style="font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; color: var(--accent, #A98B63); font-weight: 600; width: 28px;">05</span><span style="font-size: 46px; font-weight: 500; color: #DCD4C4;">El pasado y el futuro</span></div>
+        </div>
+
+        <div style="position: absolute; bottom: 56px; left: 96px; font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(169,139,99,0.42);">STOA · HOY</div>
+        <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; letter-spacing: 0.04em; color: #9A917E; line-height: 1.5;">Pretender gobernarlo es agotarse en vano.</div>
+      </div>
+    </div>
+
+    <!-- ============ 05 · EL ERROR ============ -->
+    <div style="flex: none;">
+      <div style="margin-bottom: 18px; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E6858; font-weight: 600;">05 · El error</div>
+      <div data-screen-label="05 El error" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 22px 70px rgba(0,0,0,0.18); background: radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%); color: #26221C; font-family: 'Cormorant Garamond', serif; padding: 100px 96px; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent, #A98B63);">El error</div>
+          <sc-if value="{{ showNumbers }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.25em; color: #A39A86;">05 / 08</div></sc-if>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+          <h2 style="font-size: 84px; font-weight: 600; line-height: 1.04; letter-spacing: -0.01em; text-wrap: balance;">Todo sufrimiento nace de confundirlos</h2>
+          <div style="width: 56px; height: 2px; background: var(--accent, #A98B63); margin: 44px 0;"></div>
+          <p style="font-size: 48px; font-weight: 400; line-height: 1.4; color: #433D33; text-wrap: pretty; max-width: 840px;">Sufrimos cuando intentamos gobernar lo que no depende de nosotros, y descuidamos lo único que sí está en nuestras manos.</p>
+        </div>
+
+        <div style="position: absolute; bottom: 56px; left: 96px; font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(169,139,99,0.42);">STOA · HOY</div>
+        <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; letter-spacing: 0.04em; color: #8A8170; line-height: 1.5;">La ansiedad es casi siempre un problema de fronteras mal trazadas.</div>
+      </div>
+    </div>
+
+    <!-- ============ 06 · LA LIBERTAD ============ -->
+    <div style="flex: none;">
+      <div style="margin-bottom: 18px; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E6858; font-weight: 600;">06 · La libertad</div>
+      <div data-screen-label="06 La libertad" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 22px 70px rgba(0,0,0,0.18); background: radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%); color: #26221C; font-family: 'Cormorant Garamond', serif; padding: 100px 96px; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent, #A98B63);">La libertad</div>
+          <sc-if value="{{ showNumbers }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.25em; color: #A39A86;">06 / 08</div></sc-if>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+          <h2 style="font-size: 80px; font-weight: 600; line-height: 1.04; letter-spacing: -0.01em; text-wrap: balance;">Concentra tu energía donde sí importa</h2>
+          <div style="width: 56px; height: 2px; background: var(--accent, #A98B63); margin: 44px 0;"></div>
+          <p style="font-size: 46px; font-weight: 400; line-height: 1.42; color: #433D33; text-wrap: pretty; max-width: 850px;">Quien deja de exigirle al mundo lo que no puede dar, y se ocupa solo de su juicio y su conducta, alcanza una libertad que nada exterior puede arrebatarle.</p>
+        </div>
+
+        <div style="position: absolute; bottom: 56px; left: 96px; font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(169,139,99,0.42);">STOA · HOY</div>
+        <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; letter-spacing: 0.04em; color: #8A8170; line-height: 1.5;">Soltar no es rendirse: es dirigir bien tus fuerzas.</div>
+      </div>
+    </div>
+
+    <!-- ============ 07 · PRÁCTICA ============ -->
+    <div style="flex: none;">
+      <div style="margin-bottom: 18px; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E6858; font-weight: 600;">07 · Práctica</div>
+      <div data-screen-label="07 Practica" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 22px 70px rgba(0,0,0,0.18); background: radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%); color: #26221C; font-family: 'Cormorant Garamond', serif; padding: 100px 96px; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent, #A98B63);">Práctica de hoy</div>
+          <sc-if value="{{ showNumbers }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.25em; color: #A39A86;">07 / 08</div></sc-if>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+          <h2 style="font-size: 80px; font-weight: 600; line-height: 1.04; letter-spacing: -0.01em; text-wrap: balance;">Pregúntate ante cada inquietud</h2>
+          <div style="width: 56px; height: 2px; background: var(--accent, #A98B63); margin: 48px 0;"></div>
+          <blockquote style="font-size: 56px; font-style: italic; font-weight: 500; line-height: 1.2; color: #2E2920; text-wrap: pretty;">«¿Esto depende de mí?»</blockquote>
+          <p style="font-family: 'Hanken Grotesk', sans-serif; font-size: 28px; font-weight: 400; line-height: 1.55; color: #5C5544; margin-top: 36px; max-width: 760px;">Si la respuesta es <span style="font-weight: 600; color: #2E2920;">no</span>, suéltalo con calma. Si es <span style="font-weight: 600; color: #2E2920;">sí</span>, deja de quejarte y actúa.</p>
+        </div>
+
+        <div style="position: absolute; bottom: 56px; left: 96px; font-family: 'Hanken Grotesk', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(169,139,99,0.42);">STOA · HOY</div>
+        <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; letter-spacing: 0.04em; color: #8A8170; line-height: 1.5;">Repítelo hasta que se vuelva un reflejo.</div>
+      </div>
+    </div>
+
+    <!-- ============ 08 · CIERRE ============ -->
+    <div style="flex: none;">
+      <div style="margin-bottom: 18px; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E6858; font-weight: 600;">08 · Cierre</div>
+      <div data-screen-label="08 Cierre" style="position: relative; width: 1080px; height: 1350px; overflow: hidden; border-radius: 2px; box-shadow: 0 22px 70px rgba(0,0,0,0.18); background: radial-gradient(125% 85% at 50% 10%, #25221B 0%, #1A1714 68%, #131210 100%); color: #EDE6D8; font-family: 'Cormorant Garamond', serif; padding: 100px 96px; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-family: 'Hanken Grotesk', sans-serif;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent, #A98B63);">Para recordar</div>
+          <sc-if value="{{ showNumbers }}" hint-placeholder-val="{{ true }}"><div style="font-size: 20px; letter-spacing: 0.25em; color: #8C8472;">08 / 08</div></sc-if>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+          <div style="font-size: 130px; line-height: 0.6; color: var(--accent, #A98B63); font-weight: 600; height: 60px;">“</div>
+          <blockquote style="font-size: 60px; font-weight: 500; line-height: 1.22; letter-spacing: -0.005em; text-wrap: pretty;">No pretendas que las cosas sucedan como deseas; desea que sucedan como suceden, y tu vida fluirá serena.</blockquote>
+          <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 24px; font-weight: 500; letter-spacing: 0.04em; color: #B8AF9C; margin-top: 40px;">— Epicteto</div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(237,230,216,0.16); padding-top: 40px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 26px; font-weight: 500; color: #DCD4C4;">Sígueme para estoicismo cada día</div>
+          <div style="display: flex; gap: 36px; font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; letter-spacing: 0.06em;">
+            <span style="color: var(--accent, #A98B63); font-weight: 600;">Instagram · @Stoa.Hoy</span>
+            <span style="color: #9A917E;">YouTube · @Stoa-Hoy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#A98B63&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;showNumbers&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; },
+  &quot;showDragHint&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accentColor ?? '#A98B63',
+      showNumbers: this.props.showNumbers ?? true,
+      showDragHint: this.props.showDragHint ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

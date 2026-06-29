@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Stoa.Hoy — Creador de Vídeos</title>
+  <meta name="description" content="Herramienta local para crear reels y shorts animados de Stoa.Hoy">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <!-- React 18 + ReactDOM 18 -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- Babel standalone (transforms animations.jsx JSX at runtime) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+
+  <style>
+    :root {
+      --bg:        #1a1714;
+      --panel:     #201d1a;
+      --border:    #332e28;
+      --accent:    #A98B63;
+      --accent-h:  #C9A96E;
+      --text:      #EDE6D8;
+      --muted:     #8c8472;
+      --inp:       #27231f;
+      --hover:     #2e2925;
+      --sans:      'Hanken Grotesk', sans-serif;
+      --display:   'Cormorant Garamond', serif;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:var(--sans); }
+
+    /* ── Layout ──────────────────────────────────────────────────────────── */
+    .app { display:flex; height:100vh; }
+
+    /* Left panel */
+    .ep { width:380px; flex-shrink:0; height:100vh; display:flex; flex-direction:column; background:var(--panel); border-right:1px solid var(--border); }
+    .ep-hd { padding:22px 20px 18px; border-bottom:1px solid var(--border); flex-shrink:0; }
+    .ep-hd h1 { font-family:var(--display); font-size:21px; font-weight:600; letter-spacing:.04em; }
+    .ep-hd p  { font-size:10px; color:var(--muted); letter-spacing:.26em; text-transform:uppercase; margin-top:4px; }
+    .ep-sc { flex:1; overflow-y:auto; padding:18px; }
+    .ep-sc::-webkit-scrollbar { width:3px; }
+    .ep-sc::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+    /* Form primitives */
+    .sec { font-size:10px; font-weight:700; letter-spacing:.28em; text-transform:uppercase; color:var(--accent); margin:0 0 10px; }
+    .fg  { margin-bottom:10px; }
+    .fg label { display:block; font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+    .fg input, .fg textarea, .fg select {
+      width:100%; background:var(--inp); border:1px solid var(--border); border-radius:3px;
+      color:var(--text); font-family:var(--sans); font-size:13px; padding:7px 10px; outline:none;
+      transition:border-color .15s;
+    }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color:var(--accent); }
+    .fg textarea { resize:vertical; min-height:68px; line-height:1.5; }
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .cp-wrap { display:flex; align-items:center; gap:8px; }
+    .cp-wrap input[type=color] { width:34px; height:30px; border:none; background:none; cursor:pointer; padding:0; border-radius:3px; }
+    hr { border:none; border-top:1px solid var(--border); margin:14px 0; }
+
+    /* Scene accordion */
+    .sc-card { border:1px solid var(--border); border-radius:4px; margin-bottom:5px; overflow:hidden; }
+    .sc-hd { display:flex; align-items:center; gap:9px; padding:9px 11px; cursor:pointer; background:var(--inp); transition:background .15s; user-select:none; }
+    .sc-hd:hover { background:var(--hover); }
+    .sc-num  { font-size:10px; font-weight:700; letter-spacing:.22em; color:var(--accent); min-width:22px; }
+    .sc-name { font-size:13px; color:var(--text); font-weight:500; flex:1; }
+    .sc-dur  { font-size:10px; color:var(--muted); }
+    .sc-chev { font-size:9px; color:var(--muted); transition:transform .2s; }
+    .sc-card.open .sc-chev { transform:rotate(180deg); }
+    .sc-body { display:none; padding:11px; border-top:1px solid var(--border); background:var(--bg); }
+    .sc-card.open .sc-body { display:block; }
+
+    /* Buttons */
+    .btn { font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; padding:9px 14px; border-radius:3px; border:none; cursor:pointer; transition:all .15s; }
+    .btn-p { background:var(--accent); color:#FAF8F3; }
+    .btn-p:hover { background:var(--accent-h); }
+    .btn-s { background:var(--inp); color:var(--text); border:1px solid var(--border); }
+    .btn-s:hover { border-color:var(--accent); color:var(--accent); }
+    .btn-row { display:flex; gap:8px; flex-wrap:wrap; }
+
+    /* Platform toggle */
+    .plat-tog { display:flex; border-radius:4px; overflow:hidden; border:1px solid var(--border); }
+    .plat-btn { flex:1; padding:9px 6px; font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border:none; transition:all .15s; }
+    .plat-btn.on  { background:var(--accent); color:#FAF8F3; }
+    .plat-btn.off { background:var(--inp); color:var(--muted); }
+
+    /* Right panel */
+    .rp { flex:1; height:100vh; overflow-y:auto; display:flex; flex-direction:column; background:var(--bg); }
+    .rp::-webkit-scrollbar { width:3px; }
+    .rp::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+    /* Preview section */
+    .prev-sec { padding:22px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; border-bottom:1px solid var(--border); background:#131210; }
+    .prev-label { font-size:10px; letter-spacing:.28em; text-transform:uppercase; color:var(--muted); }
+
+    /* Stage viewport (clips the 0.25 scaled 1080×1920 to 270×480) */
+    .stage-vp {
+      position:relative; width:270px; height:480px;
+      border-radius:3px; overflow:hidden;
+      box-shadow:0 22px 64px rgba(0,0,0,.65);
+      flex-shrink:0;
+    }
+    #stageScale {
+      position:absolute; top:0; left:0;
+      transform-origin:top left; transform:scale(0.25);
+      width:1080px; height:1920px;
+    }
+    #stageMount { width:1080px; height:1920px; }
+    #prevPlaceholder {
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      background:#131210; color:rgba(169,139,99,.3); font-size:10px; letter-spacing:.22em; text-transform:uppercase;
+    }
+
+    /* Record buttons */
+    .rec-btn { font-family:var(--sans); font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; border:none; padding:12px 18px; border-radius:3px; cursor:pointer; transition:opacity .2s; }
+    .rec-btn:hover { opacity:.85; }
+    .rec-btn.idle      { background:#A98B63; color:#FAF8F3; }
+    .rec-btn.loading   { background:#6E6858; color:#FAF8F3; cursor:default; }
+    .rec-btn.recording { background:#A85C4A; color:#FAF8F3; }
+    .rec-btn.encoding  { background:#6E6858; color:#FAF8F3; cursor:default; }
+    .rec-btn.done      { background:#4A7A5C; color:#FAF8F3; }
+    .rec-btn.other     { background:#3A3730; color:#8c8472; cursor:default; opacity:.5; }
+
+    /* Progress */
+    .prog-wrap { width:220px; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+    .prog-bar  { height:100%; background:var(--accent); border-radius:2px; transition:width .3s; }
+
+    /* SEO panels */
+    .seo-sec { padding:22px 24px; display:flex; flex-direction:column; gap:14px; }
+    .seo-p { background:#18161299; border:1px solid rgba(169,139,99,.18); border-radius:3px; padding:22px; }
+    .seo-ph { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .seo-lbl { font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); }
+    .seo-copy-btn { margin-left:auto; font-family:var(--sans); font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; background:rgba(169,139,99,.12); border:1px solid rgba(169,139,99,.3); color:var(--accent-h); padding:5px 12px; border-radius:2px; cursor:pointer; }
+    .seo-fl  { font-size:10px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:rgba(169,139,99,.55); margin-bottom:4px; }
+
+    /* Modal */
+    .modal-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,.72); z-index:200; align-items:center; justify-content:center; }
+    .modal-ov.vis { display:flex; }
+    .modal { background:var(--panel); border:1px solid var(--border); border-radius:6px; width:520px; max-height:80vh; display:flex; flex-direction:column; }
+    .modal-hd { padding:18px 22px; border-bottom:1px solid var(--border); }
+    .modal-hd h2 { font-family:var(--display); font-size:19px; font-weight:600; }
+    .modal-bd { padding:18px 22px; flex:1; overflow-y:auto; }
+    .modal-bd textarea { width:100%; height:230px; background:var(--inp); border:1px solid var(--border); border-radius:3px; color:var(--text); font-family:'Courier New',monospace; font-size:11px; padding:10px; outline:none; resize:vertical; }
+    .modal-ft { padding:14px 22px; border-top:1px solid var(--border); display:flex; gap:8px; justify-content:flex-end; align-items:center; }
+
+    /* Loading overlay */
+    #loadOv { display:none; position:fixed; inset:0; background:rgba(20,18,16,.88); z-index:300; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+    #loadOv.vis { display:flex; }
+    #loadOv p { color:var(--text); font-size:13px; letter-spacing:.08em; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════ LEFT PANEL ══════════════════════ -->
+  <div class="ep">
+    <div class="ep-hd">
+      <h1>∞ CREADOR DE VÍDEOS</h1>
+      <p>Stoa.Hoy · Reels &amp; Shorts · Chrome 94+</p>
+    </div>
+    <div class="ep-sc">
+
+      <!-- Plataforma -->
+      <div class="sec">Plataforma</div>
+      <div class="fg" style="margin-bottom:16px;">
+        <div class="plat-tog">
+          <button id="btnIG" class="plat-btn on"  onclick="setPlatform('ig')">📸 Instagram</button>
+          <button id="btnYT" class="plat-btn off" onclick="setPlatform('yt')">▶ YouTube</button>
+        </div>
+        <div id="platHint" style="font-size:11px;color:var(--muted);margin-top:6px;">9:16 · 1080×1920 · Reel / Short · ~46 s</div>
+      </div>
+
+      <!-- Config general -->
+      <div class="sec">Configuración General</div>
+      <div class="fg"><label>Tema del Vídeo</label><input type="text" id="metaTema" oninput="updateMeta()"></div>
+      <div class="row2">
+        <div class="fg"><label>Filósofo</label><input type="text" id="metaFilosofo" oninput="updateMeta()"></div>
+        <div class="fg"><label>Obra</label><input type="text" id="metaObra" oninput="updateMeta()"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Handle IG</label><input type="text" id="metaHandleIG" oninput="updateMeta()"></div>
+        <div class="fg"><label>Handle YT</label><input type="text" id="metaHandleYT" oninput="updateMeta()"></div>
+      </div>
+      <div class="fg" style="margin-bottom:18px;">
+        <label>Color de Acento</label>
+        <div class="cp-wrap">
+          <input type="color" id="accentColor" value="#A98B63" onchange="updateMeta()">
+          <span id="accentHex" style="font-size:13px;">#A98B63</span>
+        </div>
+      </div>
+
+      <!-- Escenas -->
+      <div class="sec">Escenas (8 · 46 s total)</div>
+      <div id="scenesContainer"></div>
+
+      <hr>
+
+      <!-- Archivos -->
+      <div class="sec">Archivos JSON</div>
+      <div class="btn-row" style="margin-bottom:20px;">
+        <button class="btn btn-s" onclick="openImportModal()">Cargar JSON</button>
+        <button class="btn btn-s" onclick="exportJson()">Guardar JSON</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════ RIGHT PANEL ══════════════════════ -->
+  <div class="rp">
+
+    <!-- Preview + Record -->
+    <div class="prev-sec">
+      <div class="prev-label">STOA · HOY · Reel · 1080 × 1920 px</div>
+
+      <div class="stage-vp">
+        <div id="stageScale">
+          <div id="stageMount"></div>
+        </div>
+        <div id="prevPlaceholder">Cargando animación…</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;">
+        <div style="display:flex;gap:10px;">
+          <button id="recBtnIG" class="rec-btn idle" onclick="startRecording('ig')">⏺ Instagram</button>
+          <button id="recBtnYT" class="rec-btn idle" onclick="startRecording('yt')">⏺ YouTube Shorts</button>
+        </div>
+        <div id="recHint" style="font-size:10px;color:rgba(255,255,255,.35);text-align:center;line-height:1.5;">Frame a frame · 24 fps · ~3-4 min · requiere Chrome 94+</div>
+        <div class="prog-wrap" id="progWrap" style="display:none;">
+          <div class="prog-bar" id="progBar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO Panels -->
+    <div class="seo-sec">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);">Copy para Publicación</div>
+
+      <!-- YouTube -->
+      <div class="seo-p">
+        <div class="seo-ph">
+          <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.12 29.12 0 0 0 1 12a29.12 29.12 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29.12 29.12 0 0 0 23 12a29.12 29.12 0 0 0-.46-5.58z" fill="#FF0000"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#fff"/></svg>
+          <span class="seo-lbl">YouTube Shorts</span>
+          <button class="seo-copy-btn" id="copyYtBtn" onclick="copySeo('yt')">Copiar todo</button>
+        </div>
+        <div class="fg"><div class="seo-fl">Título</div><input type="text" id="seoYtTitle" oninput="updateSeo()"></div>
+        <div class="fg"><div class="seo-fl">Descripción</div><textarea id="seoYtDesc" style="min-height:140px;" oninput="updateSeo()"></textarea></div>
+        <div class="fg"><div class="seo-fl">Tags</div><input type="text" id="seoYtTags" oninput="updateSeo()"></div>
+      </div>
+
+      <!-- Instagram -->
+      <div class="seo-p">
+        <div class="seo-ph">
+          <svg width="20" height="20" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igv2)"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="#fff"/><defs><linearGradient id="igv2" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse"><stop stop-color="#F9A825"/><stop offset=".4" stop-color="#E91E63"/><stop offset="1" stop-color="#7B1FA2"/></linearGradient></defs></svg>
+          <span class="seo-lbl">Instagram</span>
+          <button class="seo-copy-btn" id="copyIgBtn" onclick="copySeo('ig')">Copiar todo</button>
+        </div>
+        <div class="fg"><div class="seo-fl">Caption</div><textarea id="seoIgCaption" style="min-height:180px;" oninput="updateSeo()"></textarea></div>
+        <div class="fg"><div class="seo-fl">Primer Comentario (hashtags)</div><textarea id="seoIgComment" oninput="updateSeo()"></textarea></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="loadOv">
+  <div style="font-family:var(--display);font-size:26px;color:var(--accent);">Cargando motor de animación…</div>
+  <p>Esto ocurre solo una vez al cargar la página</p>
+</div>
+
+<!-- Import modal -->
+<div class="modal-ov" id="importModal">
+  <div class="modal">
+    <div class="modal-hd"><h2>Cargar JSON de Vídeo</h2></div>
+    <div class="modal-bd">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Pega el contenido del JSON o usa el botón para abrir un archivo.</p>
+      <textarea id="importArea" placeholder='{ "meta": { "tema": "..." }, "escenas": { "s01": { ... }, ... } }'></textarea>
+    </div>
+    <div class="modal-ft">
+      <label style="margin-right:auto;">
+        <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFile(this)">
+        <span class="btn btn-s" onclick="document.getElementById('fileInput').click()" style="cursor:pointer;">📂 Abrir archivo</span>
+      </label>
+      <button class="btn btn-s" onclick="closeImportModal()">Cancelar</button>
+      <button class="btn btn-p" onclick="applyImport()">Cargar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// DATA MODEL
+// ═══════════════════════════════════════════════════════════════════════════
+
+function defaultVideoData() {
+  return {
+    meta: {
+      tema: 'La Dicotomía del Control',
+      filosofo: 'Epicteto',
+      obra: 'Enquiridión',
+      handle_ig: '@Stoa.Hoy',
+      handle_yt: '@Stoa-Hoy'
+    },
+    platform: 'ig',
+    accentColor: '#A98B63',
+    escenas: {
+      s01: {
+        hook: '¿Y si el problema no es lo que te pasa, sino cómo lo interpretas?',
+        subtitulo: 'Esto lo sabía Epicteto hace 2000 años.'
+      },
+      s02: {
+        kicker: 'El problema',
+        heading: 'Sufrimos por lo que no podemos controlar',
+        cuerpo: 'Y seguimos haciéndolo sin darnos cuenta de que ahí está el origen de casi todo nuestro malestar.'
+      },
+      s03: {
+        kicker: 'Estoicismo',
+        concepto: 'La Dicotomía del Control',
+        definicion: 'Divide el mundo en dos: lo que depende de ti, y todo lo demás.'
+      },
+      s04: {
+        cita1: 'De las cosas que existen, unas dependen de nosotros',
+        cita2: 'y otras no dependen de nosotros.',
+        filosofo: 'Epicteto',
+        obra: 'Enquiridión'
+      },
+      s05: {
+        numero: '01',
+        heading: 'Lo que depende de ti',
+        cuerpo: 'Tu esfuerzo, tu juicio, tu actitud. Nadie puede quitarte esto.'
+      },
+      s06: {
+        numero: '02',
+        heading: 'Lo que no depende de ti',
+        cuerpo: 'El resultado, la opinión ajena, la fortuna. Suéltalos.'
+      },
+      s07: {
+        kicker: 'Para recordar',
+        takeaway: 'Tu libertad empieza donde termina tu necesidad de controlar',
+        cierre: 'Filtra cada preocupación: ¿depende de mí? Actúa. ¿No depende? Suelta.'
+      },
+      s08: {
+        ig_handle: '@Stoa.Hoy',
+        yt_intro: 'Si esto te hizo pensar,',
+        yt_subline: 'Cada día, una idea que cambia cómo ves el mundo.',
+        yt_handle: '@Stoa-Hoy'
+      }
+    },
+    seo: {
+      yt: { titulo: '', descripcion: '', tags: '' },
+      ig: { caption: '', primerComentario: '' }
+    }
+  };
+}
+
+let currentVideo   = defaultVideoData();
+let currentPlatform = 'ig';
+let recordStatus   = 'idle';
+let reactRoot      = null;
+let engineReady    = false;
+let rebuildTimer   = null;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SCENE DEFINITIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+const SCENES = [
+  { id:'s01', num:'01', name:'Hook', dur:'0 — 6.2 s',
+    fields:[ {k:'hook',l:'Frase de gancho (titular principal)',t:'ta'}, {k:'subtitulo',l:'Subtítulo / Atribución',t:'in'} ] },
+  { id:'s02', num:'02', name:'El Problema', dur:'6.2 — 11.8 s',
+    fields:[ {k:'kicker',l:'Kicker (ej. "El problema")',t:'in'}, {k:'heading',l:'Titular del problema',t:'ta'}, {k:'cuerpo',l:'Cuerpo del problema',t:'ta'} ] },
+  { id:'s03', num:'03', name:'El Principio', dur:'11.8 — 17.4 s',
+    fields:[ {k:'kicker',l:'Kicker (ej. "Estoicismo")',t:'in'}, {k:'concepto',l:'Nombre del concepto',t:'in'}, {k:'definicion',l:'Definición (una oración)',t:'ta'} ] },
+  { id:'s04', num:'04', name:'La Cita', dur:'17.4 — 24.0 s',
+    fields:[ {k:'cita1',l:'Primera parte de la cita',t:'ta'}, {k:'cita2',l:'Segunda parte de la cita',t:'ta'}, {k:'filosofo',l:'Filósofo',t:'in'}, {k:'obra',l:'Obra',t:'in'} ] },
+  { id:'s05', num:'05', name:'Punto A', dur:'24.0 — 29.6 s',
+    fields:[ {k:'numero',l:'Número (ej. "01")',t:'in'}, {k:'heading',l:'Titular del punto',t:'ta'}, {k:'cuerpo',l:'Cuerpo del punto',t:'ta'} ] },
+  { id:'s06', num:'06', name:'Punto B', dur:'29.6 — 35.2 s',
+    fields:[ {k:'numero',l:'Número (ej. "02")',t:'in'}, {k:'heading',l:'Titular del punto',t:'ta'}, {k:'cuerpo',l:'Cuerpo del punto',t:'ta'} ] },
+  { id:'s07', num:'07', name:'La Lección', dur:'35.2 — 41.0 s',
+    fields:[ {k:'kicker',l:'Kicker (ej. "Para recordar")',t:'in'}, {k:'takeaway',l:'Takeaway principal',t:'ta'}, {k:'cierre',l:'Frase de cierre',t:'ta'} ] },
+  { id:'s08', num:'08', name:'CTA Final', dur:'41.0 — 46.0 s',
+    fields:[ {k:'ig_handle',l:'Handle Instagram (para CTA IG)',t:'in'}, {k:'yt_intro',l:'Intro YT (texto pequeño, cursiva)',t:'in'}, {k:'yt_subline',l:'Subline YT (bajo SUSCRÍBETE)',t:'ta'}, {k:'yt_handle',l:'Handle YouTube',t:'in'} ] }
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UI — RENDER SCENE EDITORS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderSceneEditors() {
+  const ct = document.getElementById('scenesContainer');
+  ct.innerHTML = '';
+  SCENES.forEach((scene, i) => {
+    const card = document.createElement('div');
+    card.className = 'sc-card' + (i === 0 ? ' open' : '');
+    const hd = document.createElement('div');
+    hd.className = 'sc-hd';
+    hd.innerHTML = `<span class="sc-num">${scene.num}</span><span class="sc-name">${scene.name}</span><span class="sc-dur">${scene.dur}</span><span class="sc-chev">▼</span>`;
+    hd.onclick = () => card.classList.toggle('open');
+    const bd = document.createElement('div');
+    bd.className = 'sc-body';
+    const sd = currentVideo.escenas[scene.id] || {};
+    scene.fields.forEach(f => {
+      const fg = document.createElement('div'); fg.className = 'fg';
+      const lb = document.createElement('label'); lb.textContent = f.l; fg.appendChild(lb);
+      const el = document.createElement(f.t === 'ta' ? 'textarea' : 'input');
+      if (f.t === 'in') el.type = 'text';
+      el.value = sd[f.k] || '';
+      el.oninput = () => {
+        if (!currentVideo.escenas[scene.id]) currentVideo.escenas[scene.id] = {};
+        currentVideo.escenas[scene.id][f.k] = el.value;
+        scheduleRebuild();
+      };
+      fg.appendChild(el); bd.appendChild(fg);
+    });
+    card.appendChild(hd); card.appendChild(bd); ct.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE UPDATES
+// ═══════════════════════════════════════════════════════════════════════════
+
+function loadFormData() {
+  const m = currentVideo.meta || {};
+  document.getElementById('metaTema').value      = m.tema      || '';
+  document.getElementById('metaFilosofo').value  = m.filosofo  || '';
+  document.getElementById('metaObra').value      = m.obra      || '';
+  document.getElementById('metaHandleIG').value  = m.handle_ig || '@Stoa.Hoy';
+  document.getElementById('metaHandleYT').value  = m.handle_yt || '@Stoa-Hoy';
+  const acc = currentVideo.accentColor || '#A98B63';
+  document.getElementById('accentColor').value = acc;
+  document.getElementById('accentHex').innerText = acc;
+  setPlatform(currentVideo.platform || 'ig');
+  const seo = currentVideo.seo || { yt:{}, ig:{} };
+  document.getElementById('seoYtTitle').value    = (seo.yt && seo.yt.titulo)            || '';
+  document.getElementById('seoYtDesc').value     = (seo.yt && seo.yt.descripcion)       || '';
+  document.getElementById('seoYtTags').value     = (seo.yt && seo.yt.tags)              || '';
+  document.getElementById('seoIgCaption').value  = (seo.ig && seo.ig.caption)           || '';
+  document.getElementById('seoIgComment').value  = (seo.ig && seo.ig.primerComentario)  || '';
+}
+
+function updateMeta() {
+  currentVideo.meta.tema      = document.getElementById('metaTema').value;
+  currentVideo.meta.filosofo  = document.getElementById('metaFilosofo').value;
+  currentVideo.meta.obra      = document.getElementById('metaObra').value;
+  currentVideo.meta.handle_ig = document.getElementById('metaHandleIG').value;
+  currentVideo.meta.handle_yt = document.getElementById('metaHandleYT').value;
+  const c = document.getElementById('accentColor').value;
+  currentVideo.accentColor = c;
+  document.getElementById('accentHex').innerText = c;
+  currentVideo.platform = currentPlatform;
+  scheduleRebuild();
+}
+
+function updateSeo() {
+  if (!currentVideo.seo) currentVideo.seo = { yt:{}, ig:{} };
+  currentVideo.seo.yt.titulo          = document.getElementById('seoYtTitle').value;
+  currentVideo.seo.yt.descripcion     = document.getElementById('seoYtDesc').value;
+  currentVideo.seo.yt.tags            = document.getElementById('seoYtTags').value;
+  currentVideo.seo.ig.caption         = document.getElementById('seoIgCaption').value;
+  currentVideo.seo.ig.primerComentario = document.getElementById('seoIgComment').value;
+}
+
+function setPlatform(p) {
+  currentPlatform = p;
+  currentVideo.platform = p;
+  window.__stoaPlatform = p;
+  document.getElementById('btnIG').className = 'plat-btn ' + (p === 'ig' ? 'on' : 'off');
+  document.getElementById('btnYT').className = 'plat-btn ' + (p === 'yt' ? 'on' : 'off');
+  scheduleRebuild();
+}
+
+function scheduleRebuild() {
+  clearTimeout(rebuildTimer);
+  rebuildTimer = setTimeout(() => { if (engineReady) rebuildAnimation(); }, 180);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ANIMATION ENGINE — load animations.jsx via Babel and mount React root
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function loadEngine() {
+  document.getElementById('loadOv').classList.add('vis');
+  try {
+    const code = await fetch('./animations.jsx').then(r => r.text());
+    const xformed = window.Babel.transform(code, { presets: ['react'] }).code;
+    const script = document.createElement('script');
+    script.textContent = xformed;
+    document.head.appendChild(script);
+    // Poll for Stage
+    await new Promise((res, rej) => {
+      let n = 0;
+      const t = setInterval(() => {
+        if (window.Stage && window.useTime && window.interpolate) { clearInterval(t); res(); }
+        if (++n > 80) { clearInterval(t); rej(new Error('Stage timeout')); }
+      }, 100);
+    });
+    // Mount React root
+    const mount = document.getElementById('stageMount');
+    reactRoot = ReactDOM.createRoot(mount);
+    engineReady = true;
+    rebuildAnimation();
+    document.getElementById('prevPlaceholder').style.display = 'none';
+  } catch(e) {
+    console.error('Engine load error:', e);
+    document.getElementById('prevPlaceholder').innerText = 'Error al cargar. ¿Tienes conexión? Recarga.';
+  } finally {
+    document.getElementById('loadOv').classList.remove('vis');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BUILD VIDEO TEMPLATE — generates React component tree from currentVideo
+// ═══════════════════════════════════════════════════════════════════════════
+
+function buildTemplate(data) {
+  const { Stage, useTime, interpolate } = window;
+  const ACCENT  = data.accentColor || '#A98B63';
+  const DBG     = 'radial-gradient(125% 85% at 50% 8%, #25221B 0%, #1A1714 68%, #131210 100%)';
+  const LBG     = 'radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%)';
+  const DH='#EDE6D8', DP='#DCD4C4', DS='#B8AF9C', LH='#26221C', LP='#433D33';
+  const DUR = 46;
+
+  function eOut(p)           { return 1 - Math.pow(1-Math.min(1,Math.max(0,p)),3); }
+  function fi(t,s,d)         { return Math.min(1,Math.max(0,(t-s)/(d||.5))); }
+  function fo(t,e,d)         { return Math.min(1,Math.max(0,(e-t)/(d||.35))); }
+  function fade(t,s,e,id,od) { return Math.min(fi(t,s,id||.55),fo(t,e,od||.35)); }
+  function sy(t,s,d,dist)    { return interpolate(eOut(fi(t,s,d||.55)),[0,1],[dist||24,0]); }
+  function lw(t,s,d)         { return interpolate(eOut(fi(t,s,d||.45)),[0,1],[0,56]); }
+
+  const e = data.escenas || {};
+  const s1=e.s01||{}, s2=e.s02||{}, s3=e.s03||{}, s4=e.s04||{},
+        s5=e.s05||{}, s6=e.s06||{}, s7=e.s07||{}, s8=e.s08||{};
+
+  const ce = React.createElement;
+
+  function Flash({at}) {
+    const t=useTime(); const op=Math.max(0,1-Math.abs(t-at)/.1);
+    return ce('div',{style:{position:'absolute',inset:0,background:'#fff',opacity:op*.15,pointerEvents:'none',zIndex:100}});
+  }
+  function Mark({t,s,e,light}) {
+    return ce('div',{style:{position:'absolute',bottom:96,left:108,fontFamily:"'Hanken Grotesk',sans-serif",fontSize:22,fontWeight:600,letterSpacing:'0.28em',textTransform:'uppercase',color:light?'rgba(169,139,99,0.38)':'rgba(169,139,99,0.4)',opacity:fade(t,s+.5,e,.5,.35)}},'STOA · HOY');
+  }
+
+  // ── S01 HOOK ────────────────────────────────────────────────────────────
+  function S01() {
+    const t=useTime(),s=0,e=6.2;
+    if(t>e+.5) return null;
+    return ce('div',{style:{position:'absolute',inset:0,background:DBG,display:'flex',flexDirection:'column',alignItems:'flex-start',justifyContent:'center',padding:'0 108px',opacity:fo(t,e,.3)}},
+      ce('div',{style:{position:'absolute',top:140,left:108,right:108,fontFamily:"'Hanken Grotesk',sans-serif",fontSize:22,fontWeight:600,letterSpacing:'0.34em',textTransform:'uppercase',color:ACCENT,paddingBottom:20,borderBottom:`1px solid rgba(169,139,99,0.35)`,opacity:fade(t,.1,e,.4,.35)}},'STOA · HOY'),
+      ce('h1',{style:{fontFamily:"'Playfair Display',serif",fontSize:96,fontWeight:700,lineHeight:1.03,letterSpacing:'-0.01em',color:DH,textWrap:'balance',margin:0,opacity:fade(t,.3,e,.5,.35),transform:`translateY(${sy(t,.3,.55,32)}px)`}},s1.hook||''),
+      ce('div',{style:{width:`${interpolate(eOut(fi(t,.9,.5)),[0,1],[0,72])}px`,height:2,background:ACCENT,margin:'52px 0 40px'}}),
+      ce('p',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:52,fontStyle:'italic',fontWeight:500,color:ACCENT,lineHeight:1.3,margin:0,opacity:fade(t,1.1,e,.5,.35),transform:`translateY(${sy(t,1.1,.5,20)}px)`}},s1.subtitulo||'')
+    );
+  }
+
+  // ── S02 EL PROBLEMA ─────────────────────────────────────────────────────
+  function S02() {
+    const t=useTime(),s=6.2,e=11.8;
+    if(t<s-.5||t>e+.5) return null;
+    return ce('div',{style:{position:'absolute',inset:0,background:LBG,display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 108px',opacity:Math.min(fi(t,s,.3),fo(t,e,.3))}},
+      ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:28,fontWeight:600,letterSpacing:'0.34em',textTransform:'uppercase',color:ACCENT,marginBottom:48,opacity:fade(t,s+.2,e,.45,.3),transform:`translateY(${sy(t,s+.2,.45,18)}px)`}},s2.kicker||'El problema'),
+      ce('h2',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:108,fontWeight:600,lineHeight:1.02,letterSpacing:'-0.01em',color:LH,textWrap:'balance',margin:0,opacity:fade(t,s+.35,e,.5,.3),transform:`translateY(${sy(t,s+.35,.5,28)}px)`}},s2.heading||''),
+      ce('div',{style:{width:`${lw(t,s+.65)}px`,height:2,background:ACCENT,margin:'48px 0'}}),
+      ce('p',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:56,fontWeight:400,lineHeight:1.38,color:LP,textWrap:'pretty',maxWidth:820,margin:0,opacity:fade(t,s+.75,e,.5,.3),transform:`translateY(${sy(t,s+.75,.5,18)}px)`}},s2.cuerpo||''),
+      ce(Mark,{t,s,e,light:true})
+    );
+  }
+
+  // ── S03 EL PRINCIPIO ────────────────────────────────────────────────────
+  function S03() {
+    const t=useTime(),s=11.8,e=17.4;
+    if(t<s-.5||t>e+.5) return null;
+    return ce('div',{style:{position:'absolute',inset:0,background:DBG,display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 108px',opacity:Math.min(fi(t,s,.3),fo(t,e,.3))}},
+      ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:28,fontWeight:600,letterSpacing:'0.34em',textTransform:'uppercase',color:ACCENT,marginBottom:48,opacity:fade(t,s+.2,e,.45,.3),transform:`translateY(${sy(t,s+.2,.45,18)}px)`}},s3.kicker||'Estoicismo'),
+      ce('h2',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:118,fontWeight:600,lineHeight:1.0,letterSpacing:'-0.01em',color:DH,textWrap:'balance',margin:0,opacity:fade(t,s+.35,e,.5,.3),transform:`translateY(${sy(t,s+.35,.5,28)}px)`}},s3.concepto||''),
+      ce('div',{style:{width:`${lw(t,s+.65)}px`,height:2,background:ACCENT,margin:'52px 0'}}),
+      ce('p',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:54,fontWeight:400,lineHeight:1.38,color:DP,textWrap:'pretty',maxWidth:800,margin:0,opacity:fade(t,s+.75,e,.5,.3),transform:`translateY(${sy(t,s+.75,.5,18)}px)`}},s3.definicion||''),
+      ce(Mark,{t,s,e})
+    );
+  }
+
+  // ── S04 LA CITA ─────────────────────────────────────────────────────────
+  function S04() {
+    const t=useTime(),s=17.4,e=24.0;
+    if(t<s-.5||t>e+.5) return null;
+    return ce('div',{style:{position:'absolute',inset:0,background:LBG,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'0 108px',textAlign:'center',opacity:Math.min(fi(t,s,.3),fo(t,e,.3))}},
+      ce('div',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:200,lineHeight:.5,color:ACCENT,fontWeight:600,height:80,alignSelf:'flex-start',opacity:fade(t,s+.1,e,.4,.3)}},'"'),
+      ce('blockquote',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:82,fontWeight:500,fontStyle:'italic',lineHeight:1.2,letterSpacing:'-0.005em',textWrap:'pretty',margin:'36px 0 48px',color:LH}},
+        ce('span',{style:{opacity:fade(t,s+.3,e,.3,.3),display:'inline'}},'"'+(s4.cita1||'')+' '),
+        ce('span',{style:{opacity:fade(t,s+1.1,e,.3,.3),display:'inline'}},(s4.cita2||'')+'"')
+      ),
+      ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:28,fontWeight:500,letterSpacing:'0.06em',color:'#7C7361',opacity:fade(t,s+2.0,e,.4,.3),transform:`translateY(${sy(t,s+2.0,.4,14)}px)`}},
+        ce('span',null,'— '+(s4.filosofo||'')+', '),
+        ce('span',{style:{fontStyle:'italic',fontFamily:"'Cormorant Garamond',serif",fontSize:34}},s4.obra||'')
+      ),
+      ce(Mark,{t,s,e,light:true})
+    );
+  }
+
+  // ── S05 PUNTO A ─────────────────────────────────────────────────────────
+  function S05() {
+    const t=useTime(),s=24.0,e=29.6;
+    if(t<s-.5||t>e+.5) return null;
+    return ce('div',{style:{position:'absolute',inset:0,background:DBG,display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 108px',opacity:Math.min(fi(t,s,.3),fo(t,e,.3))}},
+      ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:36,fontWeight:700,letterSpacing:'0.2em',color:ACCENT,marginBottom:40,opacity:fade(t,s+.2,e,.45,.3),transform:`translateY(${sy(t,s+.2,.45,20)}px)`}},s5.numero||'01'),
+      ce('h2',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:100,fontWeight:600,lineHeight:1.04,letterSpacing:'-0.01em',color:DH,textWrap:'balance',margin:0,opacity:fade(t,s+.35,e,.5,.3),transform:`translateY(${sy(t,s+.35,.5,28)}px)`}},s5.heading||''),
+      ce('div',{style:{width:`${lw(t,s+.65)}px`,height:2,background:ACCENT,margin:'48px 0'}}),
+      ce('p',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:54,fontWeight:400,lineHeight:1.38,color:DP,textWrap:'pretty',maxWidth:820,margin:0,opacity:fade(t,s+.75,e,.5,.3),transform:`translateY(${sy(t,s+.75,.5,18)}px)`}},s5.cuerpo||''),
+      ce(Mark,{t,s,e})
+    );
+  }
+
+  // ── S06 PUNTO B ─────────────────────────────────────────────────────────
+  function S06() {
+    const t=useTime(),s=29.6,e=35.2;
+    if(t<s-.5||t>e+.5) return null;
+    return ce('div',{style:{position:'absolute',inset:0,background:LBG,display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 108px',opacity:Math.min(fi(t,s,.3),fo(t,e,.3))}},
+      ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:36,fontWeight:700,letterSpacing:'0.2em',color:ACCENT,marginBottom:40,opacity:fade(t,s+.2,e,.45,.3),transform:`translateY(${sy(t,s+.2,.45,20)}px)`}},s6.numero||'02'),
+      ce('h2',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:100,fontWeight:600,lineHeight:1.04,letterSpacing:'-0.01em',color:LH,textWrap:'balance',margin:0,opacity:fade(t,s+.35,e,.5,.3),transform:`translateY(${sy(t,s+.35,.5,28)}px)`}},s6.heading||''),
+      ce('div',{style:{width:`${lw(t,s+.65)}px`,height:2,background:ACCENT,margin:'48px 0'}}),
+      ce('p',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:54,fontWeight:400,lineHeight:1.38,color:LP,textWrap:'pretty',maxWidth:820,margin:0,opacity:fade(t,s+.75,e,.5,.3),transform:`translateY(${sy(t,s+.75,.5,18)}px)`}},s6.cuerpo||''),
+      ce(Mark,{t,s,e,light:true})
+    );
+  }
+
+  // ── S07 LA LECCIÓN ──────────────────────────────────────────────────────
+  function S07() {
+    const t=useTime(),s=35.2,e=41.0;
+    if(t<s-.5||t>e+.5) return null;
+    return ce('div',{style:{position:'absolute',inset:0,background:DBG,display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 108px',opacity:Math.min(fi(t,s,.3),fo(t,e,.3))}},
+      ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:28,fontWeight:600,letterSpacing:'0.34em',textTransform:'uppercase',color:ACCENT,marginBottom:48,opacity:fade(t,s+.2,e,.5,.3),transform:`translateY(${sy(t,s+.2,.5,18)}px)`}},s7.kicker||'Para recordar'),
+      ce('h2',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:110,fontWeight:600,lineHeight:1.0,letterSpacing:'-0.01em',color:DH,textWrap:'balance',margin:0,opacity:fade(t,s+.35,e,.5,.3),transform:`translateY(${sy(t,s+.35,.5,28)}px)`}},s7.takeaway||''),
+      ce('div',{style:{width:`${lw(t,s+.65)}px`,height:2,background:ACCENT,margin:'52px 0'}}),
+      ce('p',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:50,fontWeight:400,lineHeight:1.4,color:DS,textWrap:'pretty',maxWidth:820,margin:0,opacity:fade(t,s+.8,e,.5,.3),transform:`translateY(${sy(t,s+.8,.5,16)}px)`}},s7.cierre||''),
+      ce(Mark,{t,s,e})
+    );
+  }
+
+  // ── S08 CTA Instagram ───────────────────────────────────────────────────
+  function S08IG() {
+    const t=useTime(),s=41.0,e=46.0;
+    if(t<s-.5) return null;
+    const op=Math.min(fi(t,s,.3),fo(t,e,.3));
+    return ce('div',{style:{position:'absolute',inset:0,background:LBG,display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 108px',opacity:op}},
+      ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:28,fontWeight:600,letterSpacing:'0.34em',textTransform:'uppercase',color:ACCENT,marginBottom:56,opacity:fade(t,s+.1,e,.4,.3),transform:`translateY(${sy(t,s+.1,.4,18)}px)`}},'Si esto te sirvió'),
+      ce('div',{style:{display:'flex',gap:28,marginBottom:64,opacity:fade(t,s+.3,e,.6,.3),transform:`translateY(${sy(t,s+.3,.6,20)}px)`}},
+        ce('div',{style:{flex:1,border:'1px solid rgba(124,96,56,0.35)',padding:'32px 36px',display:'flex',flexDirection:'column',gap:16}},
+          ce('svg',{width:44,height:44,viewBox:'0 0 24 24',fill:'none'},ce('path',{d:'M5 3H19C19.5523 3 20 3.44772 20 4V21.2768C20 21.6173 19.6114 21.8265 19.3299 21.634L12 16.8689L4.67009 21.634C4.38858 21.8265 4 21.6173 4 21.2768V4C4 3.44772 4.44772 3 5 3Z',stroke:'#26221C',strokeWidth:1.8,strokeLinejoin:'round'})),
+          ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:34,fontWeight:700,color:'#26221C'}},'Guarda este video'),
+          ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:26,color:'#7C7361',lineHeight:1.4}},'Para volver cuando lo necesites.')
+        ),
+        ce('div',{style:{flex:1,background:'rgba(124,96,56,0.07)',border:'1px solid rgba(124,96,56,0.35)',padding:'32px 36px',display:'flex',flexDirection:'column',gap:16}},
+          ce('svg',{width:44,height:44,viewBox:'0 0 24 24',fill:'none'},
+            ce('circle',{cx:10,cy:8,r:4,stroke:ACCENT,strokeWidth:1.8}),
+            ce('path',{d:'M2 20C2 17.2386 5.58172 15 10 15',stroke:ACCENT,strokeWidth:1.8,strokeLinecap:'round'}),
+            ce('path',{d:'M18 14V20M15 17H21',stroke:ACCENT,strokeWidth:1.8,strokeLinecap:'round'})
+          ),
+          ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:34,fontWeight:700,color:ACCENT}},'Sígueme en Instagram'),
+          ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:30,fontWeight:600,color:'#C9A96E',letterSpacing:'0.06em'}},s8.ig_handle||'@Stoa.Hoy')
+        )
+      ),
+      ce('div',{style:{paddingTop:44,borderTop:'1px solid rgba(124,115,97,0.2)',opacity:fade(t,s+.8,e,.5,.3),transform:`translateY(${sy(t,s+.8,.5,14)}px)`}},
+        ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:34,fontWeight:600,letterSpacing:'0.18em',color:ACCENT}},'STOA · HOY'),
+        ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:24,color:'#8A8170',letterSpacing:'0.04em',marginTop:10}},'Instagram '+(s8.ig_handle||'@Stoa.Hoy')+' · YouTube '+(s8.yt_handle||'@Stoa-Hoy'))
+      )
+    );
+  }
+
+  // ── S08 CTA YouTube ─────────────────────────────────────────────────────
+  function S08YT() {
+    const t=useTime(),s=41.0,e=46.0;
+    if(t<s-.5) return null;
+    return ce('div',{style:{position:'absolute',inset:0,background:DBG,color:DH,fontFamily:"'Cormorant Garamond',serif",display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 108px',opacity:Math.min(fi(t,s,.3),fo(t,e,.3))}},
+      ce('div',{style:{position:'absolute',top:0,left:0,right:0,height:8,background:'linear-gradient(90deg,#7A5C32 0%,#C9A96E 30%,#E8C987 50%,#C9A96E 70%,#7A5C32 100%)',zIndex:10}}),
+      ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:22,fontWeight:600,letterSpacing:'0.34em',textTransform:'uppercase',color:ACCENT,marginBottom:72,opacity:fade(t,s+.1,e,.5,.3)}},'STOA · HOY'),
+      ce('div',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:44,fontStyle:'italic',fontWeight:500,color:DS,marginBottom:12,opacity:fade(t,s+.2,e,.55,.3),transform:`translateY(${sy(t,s+.2,.5,20)}px)`}},s8.yt_intro||'Si esto te hizo pensar,'),
+      ce('h1',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:148,fontWeight:600,lineHeight:.96,letterSpacing:'-0.02em',color:DH,margin:0,opacity:fade(t,s+.28,e,.55,.3),transform:`translateY(${sy(t,s+.28,.55,32)}px)`}},'SUSCRÍBETE'),
+      ce('div',{style:{width:`${lw(t,s+.52)}px`,height:3,background:ACCENT,margin:'48px 0 42px'}}),
+      ce('p',{style:{fontSize:52,fontStyle:'italic',fontWeight:500,color:DP,lineHeight:1.35,margin:0,textWrap:'pretty',maxWidth:820,opacity:fade(t,s+.68,e,.5,.3),transform:`translateY(${sy(t,s+.68,.5,16)}px)`}},s8.yt_subline||'Cada día, una idea que cambia cómo ves el mundo.'),
+      ce('div',{style:{marginTop:80,opacity:fade(t,s+.88,e,.45,.3),transform:`translateY(${sy(t,s+.88,.45,12)}px)`}},
+        ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:32,fontWeight:600,letterSpacing:'0.16em',color:ACCENT}},s8.yt_handle||'@Stoa-Hoy'),
+        ce('div',{style:{fontFamily:"'Hanken Grotesk',sans-serif",fontSize:22,color:'#6A6358',letterSpacing:'0.04em',marginTop:10}},'YouTube · Estoicismo diario')
+      )
+    );
+  }
+
+  function S08() { return (window.__stoaPlatform||'ig')==='yt' ? ce(S08YT) : ce(S08IG); }
+
+  const cuts=[6.2,11.8,17.4,24.0,29.6,35.2,41.0];
+
+  function VideoTemplate() {
+    return ce(Stage,{width:1080,height:1920,duration:DUR,background:'#131210'},
+      ce(S01),ce(S02),ce(S03),ce(S04),ce(S05),ce(S06),ce(S07),ce(S08),
+      ...cuts.map(at=>ce(Flash,{key:at,at}))
+    );
+  }
+  return VideoTemplate;
+}
+
+function rebuildAnimation() {
+  if (!reactRoot || !window.Stage) return;
+  window.__stoaPlatform = currentPlatform;
+  reactRoot.render(React.createElement(buildTemplate(currentVideo)));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RECORDING — WebCodecs + html-to-image + WebMMuxer
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function startRecording(platform) {
+  if (recordStatus !== 'idle') return;
+  if (!window.VideoEncoder) { alert('La API WebCodecs requiere Chrome 94 o superior.'); return; }
+  if (!engineReady) { alert('La animación todavía no ha cargado.'); return; }
+
+  const slug = (currentVideo.meta.tema||'reel').replace(/\s+/g,'-').replace(/[^\w-]/g,'').toLowerCase();
+  const filename = platform==='ig' ? `stoa-hoy-ig-${slug}.webm` : `stoa-hoy-yt-${slug}.webm`;
+
+  setRecStatus('loading', platform);
+
+  // Lazy-load html-to-image
+  if (!window.htmlToImage) {
+    try {
+      await loadScript('https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js');
+    } catch(e) { alert('Error cargando html-to-image.'); setRecStatus('idle',null); return; }
+  }
+  // Lazy-load WebMMuxer
+  if (!window.WebMMuxer) {
+    try {
+      await loadScript('https://cdn.jsdelivr.net/npm/webm-muxer@5/build/webm-muxer.js');
+    } catch(e) { alert('Error cargando WebMMuxer.'); setRecStatus('idle',null); return; }
+  }
+
+  // Wait for stage controls
+  let ctrl = null;
+  for (let i=0;i<80;i++) { if (window.__stageControls) { ctrl=window.__stageControls; break; } await delay(150); }
+  if (!ctrl) { alert('No se encontró el Stage. Recarga la página.'); setRecStatus('idle',null); return; }
+
+  // Find the 1080×1920 DOM element
+  let stageDiv = null;
+  for (let i=0;i<30;i++) {
+    stageDiv = [...document.querySelectorAll('div')].find(d=>d.offsetWidth===1080&&d.offsetHeight===1920);
+    if (stageDiv) break;
+    await delay(200);
+  }
+  if (!stageDiv) { alert('No se encontró el área de 1080×1920. Asegúrate de que el Stage está cargado.'); setRecStatus('idle',null); return; }
+
+  ctrl.setPlaying(false); ctrl.setTime(0);
+  await delay(500);
+
+  // Embed fonts as data URIs so html-to-image can capture them
+  await document.fonts.ready;
+  try {
+    const fontUrl='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap';
+    const css=await fetch(fontUrl).then(r=>r.text());
+    const re=/url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/g; let m; const urls=new Set();
+    while((m=re.exec(css))!==null) urls.add(m[1]);
+    let nc=css;
+    for(const u of urls) {
+      try { const b=await fetch(u).then(r=>r.blob()); const d=await blobToDataUrl(b); nc=nc.split(u).join(d); } catch(_){}
+    }
+    const st=document.createElement('style'); st.textContent=nc; stageDiv.prepend(st);
+  } catch(_){}
+  await delay(600);
+
+  // Warm-up
+  try { await window.htmlToImage.toCanvas(stageDiv,{width:1080,height:1920,pixelRatio:1,style:{transform:'none',transformOrigin:'top left'}}); } catch(_){}
+  await delay(300);
+
+  window.__stoaPlatform = platform;
+  setRecStatus('recording', platform);
+
+  const FPS=24, DUR=46, totalF=Math.ceil(DUR*FPS);
+  const {Muxer,ArrayBufferTarget}=window.WebMMuxer;
+  const muxTarget=new ArrayBufferTarget();
+  const muxer=new Muxer({target:muxTarget,video:{codec:'V_VP9',width:1080,height:1920,frameRate:FPS},firstTimestampBehavior:'offset'});
+  const enc=new VideoEncoder({output:(c,m)=>muxer.addVideoChunk(c,m),error:e=>console.error(e)});
+  enc.configure({codec:'vp09.00.10.08',width:1080,height:1920,bitrate:14_000_000,framerate:FPS,latencyMode:'quality'});
+
+  for(let i=0;i<totalF;i++) {
+    ctrl.setTime(i/FPS);
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    try {
+      const fc=await window.htmlToImage.toCanvas(stageDiv,{width:1080,height:1920,pixelRatio:1,style:{transform:'none',transformOrigin:'top left'}});
+      const bm=await createImageBitmap(fc);
+      const vf=new VideoFrame(bm,{timestamp:Math.round(i*1e6/FPS),duration:Math.round(1e6/FPS)});
+      enc.encode(vf,{keyFrame:i%FPS===0}); vf.close(); bm.close();
+    } catch(_){}
+    const pct=Math.round(i/totalF*100);
+    document.getElementById('progBar').style.width=pct+'%';
+    const eta=Math.round((100-pct)*.074);
+    document.getElementById('recHint').innerText=`⏺ ${pct}% — ETA ~${eta}s — no cierres esta pestaña`;
+  }
+
+  setRecStatus('encoding', platform);
+  await enc.flush(); enc.close(); muxer.finalize();
+
+  const blob=new Blob([muxTarget.buffer],{type:'video/webm'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),8000);
+
+  setRecStatus('done', platform);
+  setTimeout(()=>setRecStatus('idle',null),4000);
+}
+
+function setRecStatus(status, platform) {
+  recordStatus = status;
+  const bIG=document.getElementById('recBtnIG'), bYT=document.getElementById('recBtnYT');
+  const hint=document.getElementById('recHint'), pw=document.getElementById('progWrap');
+  const busy=status!=='idle'&&status!=='done';
+  pw.style.display=busy?'block':'none';
+  if(status==='idle') document.getElementById('progBar').style.width='0%';
+  const cls=(b,p)=>{ if(platform===p) b.className=`rec-btn ${status}`; else if(status!=='idle') b.className='rec-btn other'; else b.className='rec-btn idle'; };
+  cls(bIG,'ig'); cls(bYT,'yt');
+  const hints={idle:'Frame a frame · 24 fps · ~3-4 min · requiere Chrome 94+',loading:'Cargando fuentes y encoder…',encoding:'Empaquetando el vídeo…',done:'✓ Vídeo descargado en tu carpeta de descargas'};
+  if(status!=='recording') hint.innerText=hints[status]||hints.idle;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SEO COPY
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function copySeo(platform) {
+  let text;
+  if(platform==='yt') {
+    const t=document.getElementById('seoYtTitle').value;
+    const d=document.getElementById('seoYtDesc').value;
+    const g=document.getElementById('seoYtTags').value;
+    text=`${t}\n\n${d}${g?'\n\nTAGS:\n'+g:''}`;
+  } else {
+    const c=document.getElementById('seoIgCaption').value;
+    const m=document.getElementById('seoIgComment').value;
+    text=c+(m?'\n\n---\nPrimer comentario:\n'+m:'');
+  }
+  await navigator.clipboard.writeText(text);
+  const btn=document.getElementById(platform==='yt'?'copyYtBtn':'copyIgBtn');
+  btn.textContent='✓ Copiado'; setTimeout(()=>btn.textContent='Copiar todo',2000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// JSON IMPORT / EXPORT
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openImportModal()  { document.getElementById('importModal').classList.add('vis'); document.getElementById('importArea').value=''; }
+function closeImportModal() { document.getElementById('importModal').classList.remove('vis'); }
+
+function handleFile(input) {
+  const f=input.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=e=>document.getElementById('importArea').value=e.target.result; r.readAsText(f);
+}
+
+function applyImport() {
+  const raw=document.getElementById('importArea').value.trim(); if(!raw) return;
+  try {
+    const p=JSON.parse(raw);
+    if(!p.escenas) { alert('El JSON debe contener un objeto "escenas".'); return; }
+    currentVideo = {
+      meta:        p.meta        || {tema:'',filosofo:'',obra:'',handle_ig:'@Stoa.Hoy',handle_yt:'@Stoa-Hoy'},
+      platform:    p.platform    || 'ig',
+      accentColor: p.accentColor || '#A98B63',
+      escenas:     p.escenas,
+      seo:         p.seo         || {yt:{},ig:{}}
+    };
+    currentPlatform = currentVideo.platform;
+    window.__stoaPlatform = currentPlatform;
+    loadFormData(); renderSceneEditors();
+    if(engineReady) rebuildAnimation();
+    closeImportModal(); alert('¡JSON cargado correctamente!');
+  } catch(e) { alert('Error al parsear el JSON: '+e.message); }
+}
+
+function exportJson() {
+  updateSeo();
+  const data=JSON.parse(JSON.stringify(currentVideo));
+  const slug=(data.meta.tema||'video').replace(/\s+/g,'-').replace(/[^\w-]/g,'').toLowerCase();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=`video-${slug}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function delay(ms) { return new Promise(r=>setTimeout(r,ms)); }
+function loadScript(src) {
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s);
+  });
+}
+function blobToDataUrl(blob) {
+  return new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(blob); });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+
+window.addEventListener('DOMContentLoaded', () => {
+  loadFormData();
+  renderSceneEditors();
+  loadEngine();
+});
+</script>
+</body>
+</html>

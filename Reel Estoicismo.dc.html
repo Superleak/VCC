@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    body { margin:0; background:#050505; }
+  </style>
+</helmet>
+
+<x-import component-from-global-scope="ReelEstoicismo" from="./animations.jsx" hint-size="405px,720px"></x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:405,&quot;height&quot;:780}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this._pollForGlobals();
+  }
+
+  _pollForGlobals() {
+    if (!window.Stage || !window.useTime || !window.interpolate || !window.Easing) {
+      setTimeout(() => this._pollForGlobals(), 50);
+      return;
+    }
+    this._buildComponent();
+  }
+
+  _buildComponent() {
+    const { Stage, useTime, interpolate } = window;
+    const GOLD = '#C4A050';
+    const WHITE = '#F5F0E8';
+    const BG = '#050505';
+    const duration = 52;
+
+    function fi(t, start, dur) { return Math.min(1, Math.max(0, (t - start) / (dur||0.5))); }
+    function fo(t, end, dur)   { return Math.min(1, Math.max(0, (end - t)   / (dur||0.4))); }
+    function fade(t, s, e, id, od) { return Math.min(fi(t,s,id||0.5), fo(t,e,od||0.4)); }
+    function easeOut3(p) { return 1 - Math.pow(1-p, 3); }
+    function su(t, start, dur) { return easeOut3(fi(t, start, dur||0.5)); }
+
+    function Gancho() {
+      const t = useTime();
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:BG, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 32px', opacity: fade(t,0,3.2,0.4,0.4) }
+      },
+        React.createElement('div', { style:{ fontFamily:'Playfair Display,serif', fontSize:14, letterSpacing:'0.28em', color:GOLD, textTransform:'uppercase', marginBottom:28, opacity:fade(t,0.1,3.2), transform:`translateY(${interpolate(su(t,0.1),[0,1],[18,0])}px)` } }, 'ESTOICISMO'),
+        React.createElement('div', { style:{ fontFamily:'Playfair Display,serif', fontSize:33, fontWeight:900, color:WHITE, textAlign:'center', lineHeight:1.2, opacity:fade(t,0.5,3.2), transform:`translateY(${interpolate(su(t,0.5),[0,1],[18,0])}px)` } }, 'El 90% de lo que te preocupa...'),
+        React.createElement('div', { style:{ fontFamily:'Inter,sans-serif', fontSize:17, color:'rgba(245,240,232,0.55)', textAlign:'center', marginTop:18, opacity:fade(t,1.2,3.2), transform:`translateY(${interpolate(su(t,1.2),[0,1],[14,0])}px)`, letterSpacing:'0.04em' } }, 'el estoicismo te dice que lo ignores.')
+      );
+    }
+
+    function Flash({ at }) {
+      const t = useTime();
+      const op = Math.max(0, 1 - Math.abs(t - at) / 0.12);
+      return React.createElement('div', { style:{ position:'absolute', inset:0, background:'#fff', opacity:op*0.13, pointerEvents:'none', zIndex:99 } });
+    }
+
+    function Item({ num, start, end, title, quote, accent }) {
+      const t = useTime();
+      const ac = accent || GOLD;
+      const op = fade(t, start, end, 0.3, 0.3);
+      const nOp = fade(t, start, end, 0.28, 0.3);
+      const nSc = interpolate(su(t,start,0.38),[0,1],[0.65,1]);
+      const tOp = fade(t, start+0.3, end, 0.38, 0.3);
+      const tY  = interpolate(su(t,start+0.3,0.42),[0,1],[22,0]);
+      const qOp = fade(t, start+0.65, end, 0.4, 0.3);
+      const qY  = interpolate(su(t,start+0.65,0.42),[0,1],[16,0]);
+      const lW  = interpolate(su(t,start+0.48,0.45),[0,1],[0,100]);
+      return React.createElement('div', {
+        style:{ position:'absolute', inset:0, background:BG, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 36px', opacity:op }
+      },
+        React.createElement('div', { style:{ fontFamily:'Playfair Display,serif', fontSize:118, fontWeight:900, color:ac, lineHeight:1, opacity:nOp, transform:`scale(${nSc})`, letterSpacing:'-0.02em', textShadow:`0 0 60px ${ac}55` } }, num),
+        React.createElement('div', { style:{ fontFamily:'Playfair Display,serif', fontSize:31, fontWeight:700, color:WHITE, textAlign:'center', marginTop:2, opacity:tOp, transform:`translateY(${tY}px)`, lineHeight:1.18, whiteSpace:'pre-line' } }, title),
+        React.createElement('div', { style:{ height:1, width:`${lW}%`, background:`linear-gradient(90deg,transparent,${ac},transparent)`, margin:'16px 0', maxWidth:200 } }),
+        React.createElement('div', { style:{ fontFamily:'Inter,sans-serif', fontSize:15.5, fontWeight:300, color:'rgba(245,240,232,0.62)', textAlign:'center', opacity:qOp, transform:`translateY(${qY}px)`, lineHeight:1.65, letterSpacing:'0.025em', fontStyle:'italic', maxWidth:280 } }, quote)
+      );
+    }
+
+    function Cierre() {
+      const t = useTime();
+      const s = 40;
+      const op = fade(t, s, 52, 0.5, 0.5);
+      const cSc = interpolate(su(t,s,0.8),[0,1],[0.3,1]);
+      const cOp = fade(t, s, 52, 0.6, 0.5);
+      return React.createElement('div', {
+        style:{ position:'absolute', inset:0, background:BG, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 32px', opacity:op }
+      },
+        React.createElement('div', { style:{ width:120, height:120, borderRadius:'50%', border:`1.5px solid ${GOLD}44`, position:'absolute', opacity:cOp, transform:`scale(${cSc})` } }),
+        React.createElement('div', { style:{ width:80, height:80, borderRadius:'50%', border:`1px solid ${GOLD}66`, position:'absolute', opacity:cOp, transform:`scale(${cSc*0.9})` } }),
+        React.createElement('div', { style:{ fontFamily:'Playfair Display,serif', fontSize:13, letterSpacing:'0.3em', color:GOLD, textTransform:'uppercase', marginBottom:22, opacity:fade(t,s+0.3,52), transform:`translateY(${interpolate(su(t,s+0.3),[0,1],[18,0])}px)` } }, 'Recuerda'),
+        React.createElement('div', { style:{ fontFamily:'Playfair Display,serif', fontSize:29, fontWeight:900, color:WHITE, textAlign:'center', lineHeight:1.25, opacity:fade(t,s+0.9,52), transform:`translateY(${interpolate(su(t,s+0.9),[0,1],[16,0])}px)`, whiteSpace:'pre-line' } }, 'Ignora lo correcto.\nGana lo importante.'),
+        React.createElement('div', { style:{ width:38, height:1, background:GOLD, margin:'20px auto', opacity:fade(t,s+1.4,52) } }),
+        React.createElement('div', { style:{ fontFamily:'Inter,sans-serif', fontSize:13, color:'rgba(245,240,232,0.48)', textAlign:'center', opacity:fade(t,s+1.9,52), transform:`translateY(${interpolate(su(t,s+1.9),[0,1],[12,0])}px)`, letterSpacing:'0.1em', textTransform:'uppercase' } }, 'Sígueme para más estoicismo')
+      );
+    }
+
+    const flashTimes = [3.5, 10.5, 17.5, 24.5, 31.5, 40];
+
+    function ReelEstoicismo() {
+      const t = useTime ? useTime() : 0;
+      const sec = Math.floor(t);
+      return React.createElement(Stage, { width:405, height:720, duration, background:BG, 'data-screen-label':`t=${sec}s` },
+        React.createElement(Gancho),
+        React.createElement(Item, { key:'5', num:'5', start:3.5,  end:10.5, title:'La opinión ajena',      quote:'"Lo que piensan de ti no vive en tu cabeza. Vive en la de ellos."' }),
+        React.createElement(Item, { key:'4', num:'4', start:10.5, end:17.5, title:'El pasado',             quote:'"Ya ocurrió. No existe el botón de deshacer."' }),
+        React.createElement(Item, { key:'3', num:'3', start:17.5, end:24.5, title:'El futuro incierto',    quote:'"La mente viaja al futuro. El estoico la trae de vuelta."' }),
+        React.createElement(Item, { key:'2', num:'2', start:24.5, end:31.5, title:'El reconocimiento',     quote:'"Marco Aurelio gobernó Roma sin necesitar aplausos."' }),
+        React.createElement(Item, { key:'1', num:'1', start:31.5, end:40,   title:'Lo que no\npuedes controlar', quote:'"Solo tienes una jurisdicción: tus propios pensamientos."', accent:'#E8C060' }),
+        React.createElement(Cierre),
+        ...flashTimes.map(at => React.createElement(Flash, { key:`f${at}`, at }))
+      );
+    }
+
+    window.ReelEstoicismo = ReelEstoicismo;
+    this.forceUpdate();
+  }
+
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+:root {
+
+  /* ── Slide (1080×1350) ───────────────────────────────────── */
+  --slide-w:        1080px;
+  --slide-h:        1350px;
+  --slide-pad-x:      96px;
+  --slide-pad-y:     100px;
+
+  /* ── Internos del slide ──────────────────────────────────── */
+  --gap-kicker-content:   48px;   /* kicker → heading */
+  --gap-heading-divider:  36px;   /* heading → divisor bronce */
+  --gap-divider-body:     44px;   /* divisor → párrafo/lista */
+  --gap-item-pad:         26px;   /* padding vertical de ítem lista */
+  --gap-quote-mark:       60px;   /* comilla tipográfica → cita */
+  --gap-attribution:      40px;   /* cita → atribución */
+
+  /* ── Divisor de acento ───────────────────────────────────── */
+  --divider-w: 56px;
+  --divider-h:  2px;
+
+  /* ── Lista ───────────────────────────────────────────────── */
+  --list-num-width:  28px;
+  --list-num-gap:    28px;
+
+  /* ── Canvas de presentación ──────────────────────────────── */
+  --canvas-pad:    56px;
+  --frame-gap:     56px;
+  --label-mb:      18px;
+}

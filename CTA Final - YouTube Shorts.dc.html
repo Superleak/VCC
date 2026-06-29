@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #D8D4CB; font-family: 'Hanken Grotesk', sans-serif; }
+  @keyframes pulse-ring {
+    0%   { opacity: 0.18; transform: scale(1); }
+    50%  { opacity: 0.34; transform: scale(1.025); }
+    100% { opacity: 0.18; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    0%   { opacity: 0.55; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.55; }
+  }
+</style>
+</helmet>
+
+<!-- Wrapper page -->
+<div style="min-height: 100vh; background: #D8D4CB; padding: 56px; display: flex; flex-direction: column; gap: 40px; align-items: flex-start;">
+
+  <!-- Header -->
+  <div>
+    <div style="font-size: 13px; letter-spacing: 0.34em; text-transform: uppercase; color: #8A8170; font-weight: 600;">CTA Final · Reutilizable</div>
+    <div style="font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: #26221C; margin-top: 8px;">YouTube Shorts · CTA</div>
+    <div style="font-size: 14px; color: #8A8170; margin-top: 4px;">1080 × 1920 px · 9:16 · @Stoa-Hoy</div>
+  </div>
+
+  <!-- Frame (escalado al 50% para previsualización) -->
+  <div style="transform-origin: top left; transform: scale(0.5); width: 1080px; height: 1920px; margin-bottom: -960px;">
+  <div style="position: relative; width: 1080px; height: 1920px; overflow: hidden; border-radius: 2px; box-shadow: 0 32px 90px rgba(0,0,0,0.36); background: #000; font-family: 'Cormorant Garamond', serif; color: #EDE6D8;">
+
+    <!-- Barra superior dorada -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #7A5C32 0%, #C9A96E 28%, #E8C987 50%, #C9A96E 72%, #7A5C32 100%); z-index: 20;"></div>
+
+    <!-- Textura de fondo: viñeta sutil -->
+    <div style="position: absolute; inset: 0; background: radial-gradient(ellipse 90% 70% at 50% 38%, rgba(30,26,20,0) 0%, rgba(0,0,0,0.72) 100%); z-index: 1;"></div>
+
+    <!-- Anillo ornamental animado -->
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -54%); width: 680px; height: 680px; border-radius: 50%; border: 1px solid rgba(169,139,99,0.28); animation: pulse-ring 5s ease-in-out infinite; z-index: 2;"></div>
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -54%); width: 520px; height: 520px; border-radius: 50%; border: 1px solid rgba(169,139,99,0.18); z-index: 2;"></div>
+
+    <!-- Contenido principal -->
+    <div style="position: relative; z-index: 10; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px 88px; text-align: center;">
+
+      <!-- Wordmark -->
+      <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 22px; font-weight: 600; letter-spacing: 0.48em; text-transform: uppercase; color: #A98B63; margin-bottom: 72px; animation: shimmer 4s ease-in-out infinite;">STOA · HOY</div>
+
+      <!-- Símbolo central -->
+      <div style="width: 1px; height: 80px; background: linear-gradient(to bottom, transparent, #A98B63, transparent); margin-bottom: 64px;"></div>
+
+      <!-- Headline -->
+      <h1 style="font-size: {{ headlineSize }}px; font-weight: 600; line-height: 1.0; letter-spacing: -0.02em; text-wrap: balance; max-width: 860px; color: #EDE6D8;">Suscríbete</h1>
+
+      <!-- Divisor -->
+      <div style="width: 56px; height: 2px; background: #A98B63; margin: 60px auto;"></div>
+
+      <!-- Divisor fino -->
+      <div style="width: 1px; height: 60px; background: linear-gradient(to bottom, #A98B63, transparent); margin: 60px auto 0;"></div>
+
+    </div>
+
+    <!-- Bloque inferior de handles -->
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; z-index: 10; padding: 52px 88px 72px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);">
+      <!-- Separador -->
+      <div style="width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(169,139,99,0.4), transparent); margin-bottom: 40px;"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 19px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #8C8472;">Instagram</div>
+          <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 34px; font-weight: 600; letter-spacing: 0.04em; color: #A98B63;">@Stoa.Hoy</div>
+        </div>
+        <div style="width: 1px; height: 64px; background: rgba(169,139,99,0.3);"></div>
+        <div style="display: flex; flex-direction: column; gap: 10px; text-align: right;">
+          <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 19px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #8C8472;">YouTube</div>
+          <div style="font-family: 'Hanken Grotesk', sans-serif; font-size: 34px; font-weight: 600; letter-spacing: 0.04em; color: #A98B63;">@Stoa-Hoy</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;headline&quot;: {
+    &quot;editor&quot;: &quot;text&quot;,
+    &quot;default&quot;: &quot;Suscríbete&quot;,
+    &quot;tsType&quot;: &quot;string&quot;
+  },
+  &quot;headlineSize&quot;: {
+    &quot;editor&quot;: &quot;range&quot;,
+    &quot;default&quot;: 100,
+    &quot;min&quot;: 60,
+    &quot;max&quot;: 130,
+    &quot;step&quot;: 2,
+    &quot;unit&quot;: &quot;px&quot;,
+    &quot;tsType&quot;: &quot;number&quot;
+  }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      headline:     this.props.headline     ?? 'Suscríbete',
+      ctaLine:      this.props.ctaLine      ?? '',
+      headlineSize: this.props.headlineSize ?? 100,
+    };
+  }
+}
+</script>
+</body>
+</html>

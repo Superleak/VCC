@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { margin: 0; background: #111; }
+    .rec-btn { font-family: 'Hanken Grotesk', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #FAF8F3; border: none; padding: 14px 28px; border-radius: 2px; cursor: pointer; transition: opacity .2s; white-space: nowrap; }
+    .rec-btn:hover { opacity: 0.85; }
+    .rec-btn.idle      { background: #A98B63; }
+    .rec-btn.loading   { background: #6E6858; cursor: default; }
+    .rec-btn.recording { background: #A85C4A; }
+    .rec-btn.encoding  { background: #6E6858; cursor: default; }
+    .rec-btn.done      { background: #4A7A5C; }
+    .rec-btn.other     { background: #3A3730; cursor: default; opacity: 0.5; }
+  </style>
+</helmet>
+
+<div style="display:flex; align-items:flex-start; gap:0; min-height:100vh; width:100%;">
+
+  <div style="flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:20px; padding:32px 28px;">
+    <x-import component-from-global-scope="ReelVideoTemplate" from="./animations.jsx" hint-size="270px,480px"></x-import>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+      <div style="display:flex; gap:10px;">
+        <button onClick="{{ onRecordIg }}" class="{{ btnIg }} rec-btn">{{ labelIg }}</button>
+        <button onClick="{{ onRecordYt }}" class="{{ btnYt }} rec-btn">{{ labelYt }}</button>
+      </div>
+      <div style="font-size:11px; color:rgba(255,255,255,0.35); text-align:center; line-height:1.5;">{{ recordHint }}</div>
+    </div>
+  </div>
+
+  <div style="flex:1; padding:32px 36px 32px 8px; display:flex; flex-direction:column; gap:28px; overflow-y:auto; max-height:100vh;">
+
+    <!-- ✏️ YouTube copy -->
+    <div style="background:#18161299; border:1px solid rgba(169,139,99,0.18); border-radius:3px; padding:28px 32px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.12 29.12 0 0 0 1 12a29.12 29.12 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29.12 29.12 0 0 0 23 12a29.12 29.12 0 0 0-.46-5.58z" fill="#FF0000"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#fff"/></svg>
+        <span style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#A98B63;">YouTube Shorts</span>
+        <button onClick="{{ onCopyYt }}" style="margin-left:auto; font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; background:rgba(169,139,99,0.12); border:1px solid rgba(169,139,99,0.3); color:#C9A96E; padding:6px 14px; border-radius:2px; cursor:pointer;">{{ copyYtLabel }}</button>
+      </div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Título</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:14px; font-weight:600; color:#EDE6D8; line-height:1.5; margin-bottom:20px;">✏️ Título del video con palabras clave #estoicismo #stoicism</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Descripción</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; color:#B8AF9C; line-height:1.7; white-space:pre-line; margin-bottom:20px;">✏️ Hook que describe el dolor del espectador.
+
+✏️ Introduce el concepto estoico y qué aprenderán.
+
+En este video aprenderás:
+• ✏️ Punto 1
+• ✏️ Punto 2
+• ✏️ Punto 3
+
+👉 Suscríbete para una idea estoica cada día → @Stoa-Hoy
+
+━━━━━━━━━━━━━━━
+🔖 Más sobre estoicismo:
+• ✏️ Video relacionado → ya disponible
+━━━━━━━━━━━━━━━
+
+#estoicismo #stoicism #filosofiaestoica #desarrollopersonal #mindset #autoconocimiento #bienestar #stoic #filosofia #inteligenciaemocional</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Tags</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:12px; color:#7A7264; line-height:1.8;">estoicismo, stoicism, ✏️ concepto, filosofía estoica, desarrollopersonal, mindset, autoconocimiento, bienestar mental, inteligencia emocional, stoic philosophy, crecimiento personal</div>
+    </div>
+
+    <!-- ✏️ Instagram copy -->
+    <div style="background:#18161299; border:1px solid rgba(169,139,99,0.18); border-radius:3px; padding:28px 32px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igp)"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="#fff"/><defs><linearGradient id="igp" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse"><stop stop-color="#F9A825"/><stop offset="0.4" stop-color="#E91E63"/><stop offset="1" stop-color="#7B1FA2"/></linearGradient></defs></svg>
+        <span style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#A98B63;">Instagram</span>
+        <button onClick="{{ onCopyIg }}" style="margin-left:auto; font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; background:rgba(169,139,99,0.12); border:1px solid rgba(169,139,99,0.3); color:#C9A96E; padding:6px 14px; border-radius:2px; cursor:pointer;">{{ copyIgLabel }}</button>
+      </div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Caption</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; color:#B8AF9C; line-height:1.75; white-space:pre-line; margin-bottom:20px;">✏️ Primera línea que para el scroll. 🎯
+
+✏️ Contexto y por qué importa.
+
+«✏️ Cita del filósofo»
+— ✏️ Autor, Obra
+
+✏️ Desarrollo del mensaje principal.
+
+✏️ Pregunta de reflexión para el espectador.
+
+💾 Guarda este video para cuando lo necesites.
+
+─────────────────
+#estoicismo #stoicism #filosofía #desarrollopersonal #mindset #autoconocimiento #bienestar #saludmental #stoic #filosofiaestoica #inteligenciaemocional #crecimientopersonal #reflexion #estoico #mentalidad</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Primer comentario</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:12px; color:#7A7264; line-height:1.8;">#estoicismo #stoicism #filosofia #desarrollopersonal #mindset #autoconocimiento #bienestar #saludmental #crecimientopersonal #reflexion #estoico #stoic #inteligenciaemocional #vidainterior #filosofiaestoica #pensamiento #mentalidad</div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:405,&quot;height&quot;:720}}">
+class Component extends DCLogic {
+  state = { status: 'idle', progress: 0, platform: null, copiedYt: false, copiedIg: false };
+
+  // ✏️ Reemplaza estos textos con el copy real del video
+  _ytText() {
+    return `✏️ Título del video con palabras clave #estoicismo #stoicism
+
+DESCRIPCIÓN:
+✏️ Hook — describe el dolor del espectador en 1-2 frases.
+
+✏️ Introduce el concepto estoico.
+
+En este video aprenderás:
+• ✏️ Punto 1
+• ✏️ Punto 2
+• ✏️ Punto 3
+
+👉 Suscríbete para una idea estoica cada día → @Stoa-Hoy
+
+━━━━━━━━━━━━━━━
+🔖 Más sobre estoicismo:
+• ✏️ Video relacionado → ya disponible
+━━━━━━━━━━━━━━━
+
+TAGS:
+estoicismo, stoicism, ✏️ concepto, filosofía estoica, desarrollopersonal, mindset, autoconocimiento, bienestar mental, inteligencia emocional, stoic philosophy, crecimiento personal`;
+  }
+
+  _igText() {
+    return `✏️ Primera línea que para el scroll. 🎯
+
+✏️ Contexto y por qué importa.
+
+«✏️ Cita del filósofo»
+— ✏️ Autor, Obra
+
+✏️ Desarrollo del mensaje principal.
+
+✏️ Pregunta de reflexión para el espectador.
+
+💾 Guarda este video para cuando lo necesites.
+
+─────────────────
+#estoicismo #stoicism #filosofía #desarrollopersonal #mindset #autoconocimiento #bienestar #saludmental #stoic #filosofiaestoica #inteligenciaemocional #crecimientopersonal #reflexion #estoico #mentalidad`;
+  }
+
+  async _copy(text, key) {
+    await navigator.clipboard.writeText(text);
+    this.setState({ [key]: true });
+    setTimeout(() => this.setState({ [key]: false }), 2000);
+  }
+
+  componentDidMount() { this._poll(); }
+
+  async startRecording(platform) {
+    const { status } = this.state;
+    if (status !== 'idle') return;
+    if (!window.VideoEncoder) { alert('Usa Chrome 94+ para grabar.'); return; }
+
+    // ✏️ Cambia el nombre del archivo según el video
+    const filename = platform === 'ig'
+      ? 'stoa-hoy-instagram.webm'
+      : 'stoa-hoy-youtube-shorts.webm';
+
+    this.setState({ status: 'loading', progress: 0, platform });
+
+    // Cargar html-to-image
+    if (!window.htmlToImage) {
+      try {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js';
+          s.onload = res; s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      } catch(e) { alert('Error cargando html-to-image.'); this.setState({ status: 'idle', platform: null }); return; }
+    }
+
+    // Cargar webm-muxer
+    if (!window.WebMMuxer) {
+      try {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/webm-muxer@5/build/webm-muxer.js';
+          s.onload = res; s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      } catch(e) { alert('Error cargando el encoder de video.'); this.setState({ status: 'idle', platform: null }); return; }
+    }
+
+    let controls = null;
+    for (let i = 0; i < 60; i++) {
+      if (window.__stageControls) { controls = window.__stageControls; break; }
+      await new Promise(r => setTimeout(r, 200));
+    }
+    if (!controls) { alert('La animación no ha cargado.'); this.setState({ status: 'idle', platform: null }); return; }
+
+    function findStageDiv() {
+      for (const d of document.querySelectorAll('div')) {
+        if (d.offsetWidth === 1080 && d.offsetHeight === 1920) return d;
+      }
+      return null;
+    }
+    let stageDiv = null;
+    for (let i = 0; i < 30; i++) { stageDiv = findStageDiv(); if (stageDiv) break; await new Promise(r => setTimeout(r, 200)); }
+    if (!stageDiv) { alert('No se encontró el área de animación.'); this.setState({ status: 'idle', platform: null }); return; }
+
+    controls.setPlaying(false);
+    controls.setTime(0);
+    await new Promise(r => setTimeout(r, 500));
+
+    const W = 1080, H = 1920;
+
+    // Precargar fuentes como data URIs
+    await document.fonts.ready;
+    try {
+      const fontUrl = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap';
+      const cssText = await fetch(fontUrl).then(r => r.text());
+      const urlRegex = /url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/g;
+      let match; const urls = new Set();
+      while ((match = urlRegex.exec(cssText)) !== null) urls.add(match[1]);
+      let newCss = cssText;
+      for (const url of urls) {
+        try {
+          const blob = await fetch(url).then(r => r.blob());
+          const b64 = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
+          newCss = newCss.split(url).join(b64);
+        } catch(_) {}
+      }
+      const st = document.createElement('style'); st.textContent = newCss; stageDiv.prepend(st);
+    } catch(_) {}
+    await new Promise(r => setTimeout(r, 600));
+
+    // Frame de calentamiento
+    try {
+      await window.htmlToImage.toCanvas(stageDiv, { width: W, height: H, pixelRatio: 1, style: { transform: 'none', transformOrigin: 'top left' } });
+    } catch(_) {}
+    await new Promise(r => setTimeout(r, 300));
+
+    window.__stoaPlatform = platform;
+    this.setState({ status: 'recording', progress: 0, platform });
+
+    // ✏️ Ajusta DURATION_S a la duración real del video
+    const FPS = 24;
+    const DURATION_S = 46;
+    const totalFrames = Math.ceil(DURATION_S * FPS);
+    const self = this;
+
+    const { Muxer, ArrayBufferTarget } = window.WebMMuxer;
+    const muxerTarget = new ArrayBufferTarget();
+    const muxer = new Muxer({
+      target: muxerTarget,
+      video: { codec: 'V_VP9', width: W, height: H, frameRate: FPS },
+      firstTimestampBehavior: 'offset'
+    });
+
+    const encoder = new VideoEncoder({
+      output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+      error: e => console.error('VideoEncoder:', e)
+    });
+    encoder.configure({
+      codec: 'vp09.00.10.08',
+      width: W, height: H,
+      bitrate: 14_000_000,
+      framerate: FPS,
+      latencyMode: 'quality'
+    });
+
+    for (let i = 0; i < totalFrames; i++) {
+      controls.setTime(i / FPS);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      try {
+        const fc = await window.htmlToImage.toCanvas(stageDiv, {
+          width: W, height: H, pixelRatio: 1,
+          style: { transform: 'none', transformOrigin: 'top left' }
+        });
+        const bitmap = await createImageBitmap(fc);
+        const vf = new VideoFrame(bitmap, {
+          timestamp: Math.round(i * 1_000_000 / FPS),
+          duration:  Math.round(1_000_000 / FPS)
+        });
+        encoder.encode(vf, { keyFrame: i % FPS === 0 });
+        vf.close(); bitmap.close();
+      } catch(_) {}
+      self.setState({ progress: Math.round(i / totalFrames * 100) });
+    }
+
+    self.setState({ status: 'encoding', progress: 100 });
+    await encoder.flush();
+    encoder.close();
+    muxer.finalize();
+
+    const blob = new Blob([muxerTarget.buffer], { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 8000);
+
+    self.setState({ status: 'done', progress: 100, platform });
+    setTimeout(() => self.setState({ status: 'idle', progress: 0, platform: null }), 4000);
+  }
+  _poll() {
+    if (!window.Stage || !window.useTime || !window.interpolate) {
+      setTimeout(() => this._poll(), 50); return;
+    }
+    this._build();
+  }
+
+  _build() {
+    const { Stage, useTime, interpolate } = window;
+
+    // ── Tokens del sistema visual STOA · HOY ─────────────────────────────────
+    // Para adaptar este template: edita las secciones marcadas con ✏️
+    const ACCENT   = '#A98B63';
+    const DARK_BG  = 'radial-gradient(125% 85% at 50% 8%, #25221B 0%, #1A1714 68%, #131210 100%)';
+    const LIGHT_BG = 'radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%)';
+    const DARK_H   = '#EDE6D8';
+    const DARK_P   = '#DCD4C4';
+    const DARK_SUB = '#B8AF9C';
+    const LIGHT_H  = '#26221C';
+    const LIGHT_P  = '#433D33';
+
+    // ✏️ Duración total en segundos
+    const DURATION = 46;
+
+    // ── Utilidades de animación ───────────────────────────────────────────────
+    function eOut(p)  { return 1 - Math.pow(1 - Math.min(1, Math.max(0, p)), 3); }
+    function fi(t, s, d)  { return Math.min(1, Math.max(0, (t - s) / (d || 0.5))); }
+    function fo(t, e, d)  { return Math.min(1, Math.max(0, (e - t) / (d || 0.35))); }
+    function fade(t, s, e, id, od) { return Math.min(fi(t, s, id || 0.55), fo(t, e, od || 0.35)); }
+    function sy(t, s, d, dist)  { return interpolate(eOut(fi(t, s, d || 0.55)), [0, 1], [dist || 24, 0]); }
+    function lineW(t, s, d) { return interpolate(eOut(fi(t, s, d || 0.45)), [0, 1], [0, 56]); }
+
+    // Flash de transición entre slides
+    function Flash({ at }) {
+      const t = useTime();
+      const op = Math.max(0, 1 - Math.abs(t - at) / 0.1);
+      return React.createElement('div', { style: { position:'absolute', inset:0, background:'#fff', opacity:op*0.15, pointerEvents:'none', zIndex:100 } });
+    }
+
+    // Marca de agua STOA · HOY
+    function Mark({ t, s, e, light }) {
+      return React.createElement('div', {
+        style: { position:'absolute', bottom:96, left:108, fontFamily:"'Hanken Grotesk',sans-serif", fontSize:22, fontWeight:600, letterSpacing:'0.28em', textTransform:'uppercase', color: light ? 'rgba(169,139,99,0.38)' : 'rgba(169,139,99,0.4)', opacity:fade(t,s+0.5,e,0.5,0.35) }
+      }, 'STOA · HOY');
+    }
+
+    // ── SLIDE 01 · HOOK ───────────────────────────────────────────────────────
+    // ✏️ Cambia el gancho y el subtítulo
+    function Slide01() {
+      const t = useTime(); const s = 0; const e = 6.2;
+      if (t > e + 0.5) return null;
+      const op = fo(t, e, 0.3);
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:DARK_BG, display:'flex', flexDirection:'column', alignItems:'flex-start', justifyContent:'center', padding:'0 108px', opacity:op }
+      },
+        // Barra de marca superior
+        React.createElement('div', { style:{ position:'absolute', top:140, left:108, right:108, fontFamily:"'Hanken Grotesk',sans-serif", fontSize:22, fontWeight:600, letterSpacing:'0.34em', textTransform:'uppercase', color:ACCENT, paddingBottom:20, borderBottom:`1px solid rgba(169,139,99,0.35)`, opacity:fade(t,0.1,e,0.4,0.35) } }, 'STOA · HOY'),
+        // ✏️ Título del hook (frase que para el scroll)
+        React.createElement('h1', { style:{ fontFamily:"'Playfair Display',serif", fontSize:96, fontWeight:700, lineHeight:1.03, letterSpacing:'-0.01em', color:DARK_H, textWrap:'balance', margin:0, opacity:fade(t,0.3,e,0.5,0.35), transform:`translateY(${sy(t,0.3,0.55,32)}px)` } },
+          '¿Y si el problema no es lo que te pasa, sino cómo lo interpretas?'),
+        // Divider animado
+        React.createElement('div', { style:{ width:`${interpolate(eOut(fi(t,0.9,0.5)),[0,1],[0,72])}px`, height:2, background:ACCENT, margin:'52px 0 40px' } }),
+        // ✏️ Subtítulo / atribución
+        React.createElement('p', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:52, fontStyle:'italic', fontWeight:500, color:ACCENT, lineHeight:1.3, margin:0, opacity:fade(t,1.1,e,0.5,0.35), transform:`translateY(${sy(t,1.1,0.5,20)}px)` } },
+          'Esto lo sabía Epicteto hace 2000 años.')
+      );
+    }
+
+    // ── SLIDE 02 · EL PROBLEMA ───────────────────────────────────────────────
+    // ✏️ Nombra el dolor del espectador. Fondo claro.
+    function Slide02() {
+      const t = useTime(); const s = 6.2; const e = 11.8;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:LIGHT_BG, display:'flex', flexDirection:'column', justifyContent:'center', padding:'0 108px', opacity:Math.min(fi(t,s,0.3), fo(t,e,0.3)) }
+      },
+        React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:28, fontWeight:600, letterSpacing:'0.34em', textTransform:'uppercase', color:ACCENT, marginBottom:48, opacity:fade(t,s+0.2,e,0.45,0.3), transform:`translateY(${sy(t,s+0.2,0.45,18)}px)` } }, 'El problema'),
+        // ✏️ Heading del problema
+        React.createElement('h2', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:108, fontWeight:600, lineHeight:1.02, letterSpacing:'-0.01em', color:LIGHT_H, textWrap:'balance', margin:0, opacity:fade(t,s+0.35,e,0.5,0.3), transform:`translateY(${sy(t,s+0.35,0.5,28)}px)` } },
+          'Sufrimos por lo que no podemos controlar'),
+        React.createElement('div', { style:{ width:`${lineW(t,s+0.65)}px`, height:2, background:ACCENT, margin:'48px 0' } }),
+        // ✏️ Cuerpo del problema
+        React.createElement('p', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:56, fontWeight:400, lineHeight:1.38, color:LIGHT_P, textWrap:'pretty', maxWidth:820, margin:0, opacity:fade(t,s+0.75,e,0.5,0.3), transform:`translateY(${sy(t,s+0.75,0.5,18)}px)` } },
+          'Y seguimos haciéndolo sin darnos cuenta de que ahí está el origen de casi todo nuestro malestar.'),
+        React.createElement(Mark, { t, s, e, light:true })
+      );
+    }
+
+    // ── SLIDE 03 · EL PRINCIPIO ──────────────────────────────────────────────
+    // ✏️ Introduce el concepto estoico. Fondo oscuro.
+    function Slide03() {
+      const t = useTime(); const s = 11.8; const e = 17.4;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:DARK_BG, display:'flex', flexDirection:'column', justifyContent:'center', padding:'0 108px', opacity:Math.min(fi(t,s,0.3), fo(t,e,0.3)) }
+      },
+        React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:28, fontWeight:600, letterSpacing:'0.34em', textTransform:'uppercase', color:ACCENT, marginBottom:48, opacity:fade(t,s+0.2,e,0.45,0.3), transform:`translateY(${sy(t,s+0.2,0.45,18)}px)` } }, 'Estoicismo'),
+        // ✏️ Nombre del concepto
+        React.createElement('h2', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:118, fontWeight:600, lineHeight:1.0, letterSpacing:'-0.01em', color:DARK_H, textWrap:'balance', margin:0, opacity:fade(t,s+0.35,e,0.5,0.3), transform:`translateY(${sy(t,s+0.35,0.5,28)}px)` } },
+          'El nombre del concepto'),
+        React.createElement('div', { style:{ width:`${lineW(t,s+0.65)}px`, height:2, background:ACCENT, margin:'52px 0' } }),
+        // ✏️ Definición en una oración
+        React.createElement('p', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:54, fontWeight:400, lineHeight:1.38, color:DARK_P, textWrap:'pretty', maxWidth:800, margin:0, opacity:fade(t,s+0.75,e,0.5,0.3), transform:`translateY(${sy(t,s+0.75,0.5,18)}px)` } },
+          'Una sola oración que explique la idea central con precisión.'),
+        React.createElement(Mark, { t, s, e })
+      );
+    }
+
+    // ── SLIDE 04 · LA CITA ───────────────────────────────────────────────────
+    // ✏️ Cita directa del filósofo. Fondo claro, centrado.
+    function Slide04() {
+      const t = useTime(); const s = 17.4; const e = 24.0;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:LIGHT_BG, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 108px', textAlign:'center', opacity:Math.min(fi(t,s,0.3), fo(t,e,0.3)) }
+      },
+        // Comilla decorativa
+        React.createElement('div', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:200, lineHeight:0.5, color:ACCENT, fontWeight:600, height:80, alignSelf:'flex-start', opacity:fade(t,s+0.1,e,0.4,0.3) } }, '"'),
+        // ✏️ Cita — aparece en dos mitades, rápido
+        React.createElement('blockquote', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:82, fontWeight:500, fontStyle:'italic', lineHeight:1.2, letterSpacing:'-0.005em', textWrap:'pretty', margin:'36px 0 48px', color:LIGHT_H } },
+          React.createElement('span', { style:{ opacity:fade(t,s+0.3,e,0.3,0.3), display:'inline' } }, '"Primera mitad de la cita '),
+          React.createElement('span', { style:{ opacity:fade(t,s+1.1,e,0.3,0.3), display:'inline' } }, 'segunda mitad de la cita."')
+        ),
+        // ✏️ Atribución
+        React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:28, fontWeight:500, letterSpacing:'0.06em', color:'#7C7361', opacity:fade(t,s+2.0,e,0.4,0.3), transform:`translateY(${sy(t,s+2.0,0.4,14)}px)` } },
+          React.createElement('span', null, '— Filósofo, '),
+          React.createElement('span', { style:{ fontStyle:'italic', fontFamily:"'Cormorant Garamond',serif", fontSize:34 } }, 'Obra')
+        ),
+        React.createElement(Mark, { t, s, e, light:true })
+      );
+    }
+
+    // ── SLIDE 05 · PUNTO A ───────────────────────────────────────────────────
+    // ✏️ Primer punto de desarrollo. Fondo oscuro.
+    function Slide05() {
+      const t = useTime(); const s = 24.0; const e = 29.6;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:DARK_BG, display:'flex', flexDirection:'column', justifyContent:'center', padding:'0 108px', opacity:Math.min(fi(t,s,0.3), fo(t,e,0.3)) }
+      },
+        React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:36, fontWeight:700, letterSpacing:'0.2em', color:ACCENT, marginBottom:40, opacity:fade(t,s+0.2,e,0.45,0.3), transform:`translateY(${sy(t,s+0.2,0.45,20)}px)` } }, '01'),
+        // ✏️ Heading del punto A
+        React.createElement('h2', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:100, fontWeight:600, lineHeight:1.04, letterSpacing:'-0.01em', color:DARK_H, textWrap:'balance', margin:0, opacity:fade(t,s+0.35,e,0.5,0.3), transform:`translateY(${sy(t,s+0.35,0.5,28)}px)` } },
+          'Heading del primer punto clave'),
+        React.createElement('div', { style:{ width:`${lineW(t,s+0.65)}px`, height:2, background:ACCENT, margin:'48px 0' } }),
+        // ✏️ Cuerpo del punto A
+        React.createElement('p', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:54, fontWeight:400, lineHeight:1.38, color:DARK_P, textWrap:'pretty', maxWidth:820, margin:0, opacity:fade(t,s+0.75,e,0.5,0.3), transform:`translateY(${sy(t,s+0.75,0.5,18)}px)` } },
+          'Una sola oración que desarrolla este punto. Directa y precisa.'),
+        React.createElement(Mark, { t, s, e })
+      );
+    }
+
+    // ── SLIDE 06 · PUNTO B ───────────────────────────────────────────────────
+    // ✏️ Segundo punto. Fondo claro.
+    function Slide06() {
+      const t = useTime(); const s = 29.6; const e = 35.2;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:LIGHT_BG, display:'flex', flexDirection:'column', justifyContent:'center', padding:'0 108px', opacity:Math.min(fi(t,s,0.3), fo(t,e,0.3)) }
+      },
+        React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:36, fontWeight:700, letterSpacing:'0.2em', color:ACCENT, marginBottom:40, opacity:fade(t,s+0.2,e,0.45,0.3), transform:`translateY(${sy(t,s+0.2,0.45,20)}px)` } }, '02'),
+        // ✏️ Heading del punto B
+        React.createElement('h2', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:100, fontWeight:600, lineHeight:1.04, letterSpacing:'-0.01em', color:LIGHT_H, textWrap:'balance', margin:0, opacity:fade(t,s+0.35,e,0.5,0.3), transform:`translateY(${sy(t,s+0.35,0.5,28)}px)` } },
+          'Heading del segundo punto clave'),
+        React.createElement('div', { style:{ width:`${lineW(t,s+0.65)}px`, height:2, background:ACCENT, margin:'48px 0' } }),
+        // ✏️ Cuerpo del punto B
+        React.createElement('p', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:54, fontWeight:400, lineHeight:1.38, color:LIGHT_P, textWrap:'pretty', maxWidth:820, margin:0, opacity:fade(t,s+0.75,e,0.5,0.3), transform:`translateY(${sy(t,s+0.75,0.5,18)}px)` } },
+          'Una sola oración que desarrolla este punto. Directa y precisa.'),
+        React.createElement(Mark, { t, s, e, light:true })
+      );
+    }
+
+    // ── SLIDE 07 · LA LECCIÓN ────────────────────────────────────────────────
+    // ✏️ El takeaway final. Fondo oscuro. Pausa larga.
+    function Slide07() {
+      const t = useTime(); const s = 35.2; const e = 41.0;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:DARK_BG, display:'flex', flexDirection:'column', justifyContent:'center', padding:'0 108px', opacity:Math.min(fi(t,s,0.3), fo(t,e,0.3)) }
+      },
+        React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:28, fontWeight:600, letterSpacing:'0.34em', textTransform:'uppercase', color:ACCENT, marginBottom:48, opacity:fade(t,s+0.2,e,0.5,0.3), transform:`translateY(${sy(t,s+0.2,0.5,18)}px)` } }, 'Para recordar'),
+        // ✏️ El takeaway que debe quedar grabado
+        React.createElement('h2', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:110, fontWeight:600, lineHeight:1.0, letterSpacing:'-0.01em', color:DARK_H, textWrap:'balance', margin:0, opacity:fade(t,s+0.35,e,0.5,0.3), transform:`translateY(${sy(t,s+0.35,0.5,28)}px)` } },
+          'El takeaway que quieres que se lleven'),
+        React.createElement('div', { style:{ width:`${lineW(t,s+0.65)}px`, height:2, background:ACCENT, margin:'52px 0' } }),
+        // ✏️ Frase de cierre
+        React.createElement('p', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:50, fontWeight:400, lineHeight:1.4, color:DARK_SUB, textWrap:'pretty', maxWidth:820, margin:0, opacity:fade(t,s+0.8,e,0.5,0.3), transform:`translateY(${sy(t,s+0.8,0.5,16)}px)` } },
+          'Una frase de cierre que refuerza la lección y la hace memorable.'),
+        React.createElement(Mark, { t, s, e })
+      );
+    }
+
+    // ── SLIDE 08 · CTA Instagram ─────────────────────────────────────────────
+    function Slide08Instagram() {
+      const t = useTime(); const s = 41.0; const e = 46.0;
+      if (t < s - 0.5) return null;
+      const op = Math.min(fi(t,s,0.3), fo(t,e,0.3));
+      const op1 = fade(t, s+0.3, e, 0.6, 0.3);
+      const op3 = fade(t, s+0.8, e, 0.5, 0.3);
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:LIGHT_BG, display:'flex', flexDirection:'column', justifyContent:'center', padding:'0 108px', opacity:op }
+      },
+        React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:28, fontWeight:600, letterSpacing:'0.34em', textTransform:'uppercase', color:ACCENT, marginBottom:56, opacity:fade(t,s+0.1,e,0.4,0.3), transform:`translateY(${sy(t,s+0.1,0.4,18)}px)` } }, 'Si esto te sirvió'),
+        React.createElement('div', { style:{ display:'flex', gap:28, marginBottom:64, opacity:op1, transform:`translateY(${sy(t,s+0.3,0.6,20)}px)` } },
+          React.createElement('div', { style:{ flex:1, border:'1px solid rgba(124,96,56,0.35)', padding:'32px 36px', display:'flex', flexDirection:'column', gap:16 } },
+            React.createElement('svg', { width:44, height:44, viewBox:'0 0 24 24', fill:'none' },
+              React.createElement('path', { d:'M5 3H19C19.5523 3 20 3.44772 20 4V21.2768C20 21.6173 19.6114 21.8265 19.3299 21.634L12 16.8689L4.67009 21.634C4.38858 21.8265 4 21.6173 4 21.2768V4C4 3.44772 4.44772 3 5 3Z', stroke:'#26221C', strokeWidth:1.8, strokeLinejoin:'round' })
+            ),
+            React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:34, fontWeight:700, color:'#26221C' } }, 'Guarda este video'),
+            React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:26, color:'#7C7361', lineHeight:1.4 } }, 'Para volver cuando lo necesites.')
+          ),
+          React.createElement('div', { style:{ flex:1, background:'rgba(124,96,56,0.07)', border:'1px solid rgba(124,96,56,0.35)', padding:'32px 36px', display:'flex', flexDirection:'column', gap:16 } },
+            React.createElement('svg', { width:44, height:44, viewBox:'0 0 24 24', fill:'none' },
+              React.createElement('circle', { cx:10, cy:8, r:4, stroke:ACCENT, strokeWidth:1.8 }),
+              React.createElement('path', { d:'M2 20C2 17.2386 5.58172 15 10 15', stroke:ACCENT, strokeWidth:1.8, strokeLinecap:'round' }),
+              React.createElement('path', { d:'M18 14V20M15 17H21', stroke:ACCENT, strokeWidth:1.8, strokeLinecap:'round' })
+            ),
+            React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:34, fontWeight:700, color:ACCENT } }, 'Sígueme en Instagram'),
+            React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:30, fontWeight:600, color:'#C9A96E', letterSpacing:'0.06em' } }, '@Stoa.Hoy')
+          )
+        ),
+        React.createElement('div', { style:{ paddingTop:44, borderTop:'1px solid rgba(124,115,97,0.2)', opacity:op3, transform:`translateY(${sy(t,s+0.8,0.5,14)}px)` } },
+          React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:34, fontWeight:600, letterSpacing:'0.18em', color:ACCENT } }, 'STOA · HOY'),
+          React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, color:'#8A8170', letterSpacing:'0.04em', marginTop:10 } }, 'Instagram @Stoa.Hoy · YouTube @Stoa-Hoy')
+        )
+      );
+    }
+
+    // ── SLIDE 08 · CTA YouTube — SUSCRÍBETE ─────────────────────────────────
+    function Slide08YouTube() {
+      const t = useTime(); const s = 41.0; const e = 46.0;
+      if (t < s - 0.5) return null;
+      const DARK_BG_Y = DARK_BG;
+      return React.createElement('div', {
+        style: { position:'absolute', inset:0, background:DARK_BG_Y, color:DARK_H, fontFamily:"'Cormorant Garamond',serif", display:'flex', flexDirection:'column', justifyContent:'center', padding:'0 108px', opacity:Math.min(fi(t,s,0.3), fo(t,e,0.3)) }
+      },
+        React.createElement('div', { style:{ position:'absolute', top:0, left:0, right:0, height:8, background:'linear-gradient(90deg,#7A5C32 0%,#C9A96E 30%,#E8C987 50%,#C9A96E 70%,#7A5C32 100%)', zIndex:10 } }),
+        React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:22, fontWeight:600, letterSpacing:'0.34em', textTransform:'uppercase', color:ACCENT, marginBottom:72, opacity:fade(t,s+0.1,e,0.5,0.3) } }, 'STOA · HOY'),
+        React.createElement('div', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:44, fontStyle:'italic', fontWeight:500, color:DARK_SUB, marginBottom:12, opacity:fade(t,s+0.2,e,0.55,0.3), transform:`translateY(${sy(t,s+0.2,0.5,20)}px)` } }, 'Si esto te hizo pensar,'),
+        React.createElement('h1', { style:{ fontFamily:"'Cormorant Garamond',serif", fontSize:148, fontWeight:600, lineHeight:0.96, letterSpacing:'-0.02em', color:DARK_H, margin:0, opacity:fade(t,s+0.28,e,0.55,0.3), transform:`translateY(${sy(t,s+0.28,0.55,32)}px)` } }, 'SUSCRÍBETE'),
+        React.createElement('div', { style:{ width:`${lineW(t,s+0.52)}px`, height:3, background:ACCENT, margin:'48px 0 42px' } }),
+        React.createElement('p', { style:{ fontSize:52, fontStyle:'italic', fontWeight:500, color:DARK_P, lineHeight:1.35, margin:0, textWrap:'pretty', maxWidth:820, opacity:fade(t,s+0.68,e,0.5,0.3), transform:`translateY(${sy(t,s+0.68,0.5,16)}px)` } }, 'Cada día, una idea que cambia cómo ves el mundo.'),
+        React.createElement('div', { style:{ marginTop:80, opacity:fade(t,s+0.88,e,0.45,0.3), transform:`translateY(${sy(t,s+0.88,0.45,12)}px)` } },
+          React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:32, fontWeight:600, letterSpacing:'0.16em', color:ACCENT } }, '@Stoa-Hoy'),
+          React.createElement('div', { style:{ fontFamily:"'Hanken Grotesk',sans-serif", fontSize:22, color:'#6A6358', letterSpacing:'0.04em', marginTop:10 } }, 'YouTube · Estoicismo diario')
+        )
+      );
+    }
+
+    // ── Switcher CTA ─────────────────────────────────────────────────────────
+    function Slide08() {
+      return (window.__stoaPlatform || 'ig') === 'yt'
+        ? React.createElement(Slide08YouTube)
+        : React.createElement(Slide08Instagram);
+    }
+
+    // ── Stage principal ───────────────────────────────────────────────────────
+    const cuts = [6.2, 11.8, 17.4, 24.0, 29.6, 35.2, 41.0];
+
+    function ReelVideoTemplate() {
+      const t = useTime ? useTime() : 0;
+      return React.createElement(Stage, { width:1080, height:1920, duration:DURATION, background:'#131210', 'data-screen-label':`t=${Math.floor(t)}s` },
+        React.createElement(Slide01),
+        React.createElement(Slide02),
+        React.createElement(Slide03),
+        React.createElement(Slide04),
+        React.createElement(Slide05),
+        React.createElement(Slide06),
+        React.createElement(Slide07),
+        React.createElement(Slide08),
+        ...cuts.map(at => React.createElement(Flash, { key:at, at }))
+      );
+    }
+
+    window.ReelVideoTemplate = ReelVideoTemplate;
+    this.forceUpdate();
+  }
+
+  renderVals() {
+    const { status, progress, platform } = this.state;
+    const busy = status !== 'idle';
+
+    const label = (p) => {
+      if (!busy || platform !== p) return p === 'ig' ? '⏺ Instagram' : '⏺ YouTube Shorts';
+      if (status === 'loading')   return 'Preparando…';
+      if (status === 'recording') return `⏺ ${progress}% (~${Math.round((100 - progress) * 0.074)}s)`;
+      if (status === 'encoding')  return 'Finalizando…';
+      if (status === 'done')      return '✓ Descargado';
+      return p === 'ig' ? '⏺ Instagram' : '⏺ YouTube Shorts';
+    };
+
+    const btnClass = (p) => {
+      if (platform === p) return status;
+      if (busy) return 'other';
+      return 'idle';
+    };
+
+    const hints = {
+      idle:      'Frame a frame · 24fps · ~3-4 min de procesado',
+      loading:   'Cargando fuentes y encoder…',
+      recording: 'Procesando frames — no cierres esta pestaña',
+      encoding:  'Empaquetando el video…',
+      done:      'Archivo descargado en tu carpeta de descargas',
+    };
+
+    return {
+      onRecordIg:  () => this.startRecording('ig'),
+      onRecordYt:  () => this.startRecording('yt'),
+      labelIg:     label('ig'),
+      labelYt:     label('yt'),
+      btnIg:       btnClass('ig'),
+      btnYt:       btnClass('yt'),
+      recordHint:  hints[status] || hints.idle,
+      onCopyYt:    () => this._copy(this._ytText(), 'copiedYt'),
+      onCopyIg:    () => this._copy(this._igText(), 'copiedIg'),
+      copyYtLabel: this.state.copiedYt ? '✓ Copiado' : 'Copiar todo',
+      copyIgLabel: this.state.copiedIg ? '✓ Copiado' : 'Copiar todo',
+    };
+  }
+}
+</script>
+</body>
+</html>

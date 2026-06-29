@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; } body { background: #0E0D0B; }
+    .rec-btn { font-family: 'Hanken Grotesk', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #FAF8F3; border: none; padding: 16px 36px; border-radius: 2px; cursor: pointer; transition: opacity .2s; white-space: nowrap; }
+    .rec-btn:hover { opacity: 0.85; }
+    .rec-btn.idle      { background: #A98B63; }
+    .rec-btn.loading   { background: #6E6858; cursor: default; }
+    .rec-btn.recording { background: #A85C4A; }
+    .rec-btn.encoding  { background: #6E6858; cursor: default; }
+    .rec-btn.done      { background: #4A7A5C; }
+    .rec-btn.other     { background: #3A3730; cursor: default; opacity: 0.5; }
+  </style>
+</helmet>
+
+<!-- Layout principal: video + panel de textos -->
+<div style="display:flex; align-items:flex-start; gap:0; min-height:100vh; width:100%;">
+
+  <!-- Columna izquierda: video + botones -->
+  <div style="flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:20px; padding:32px 28px;">
+    <x-import component-from-global-scope="SoledadVideo" from="./animations.jsx" hint-size="270px,480px"></x-import>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+      <div style="display:flex; gap:10px;">
+        <button onClick="{{ onRecordIg }}" class="{{ btnIg }} rec-btn">{{ labelIg }}</button>
+        <button onClick="{{ onRecordYt }}" class="{{ btnYt }} rec-btn">{{ labelYt }}</button>
+      </div>
+      <div style="font-size:11px; color:rgba(255,255,255,0.35); text-align:center; line-height:1.5;">{{ recordHint }}</div>
+    </div>
+  </div>
+
+  <!-- Columna derecha: textos SEO -->
+  <div style="flex:1; padding:32px 36px 32px 8px; display:flex; flex-direction:column; gap:28px; overflow-y:auto; max-height:100vh;">
+
+    <!-- YouTube -->
+    <div style="background:#18161299; border:1px solid rgba(169,139,99,0.18); border-radius:3px; padding:28px 32px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.12 29.12 0 0 0 1 12a29.12 29.12 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29.12 29.12 0 0 0 23 12a29.12 29.12 0 0 0-.46-5.58z" fill="#FF0000"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#fff"/></svg>
+        <span style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#A98B63;">YouTube Shorts</span>
+        <button onClick="{{ onCopyYt }}" style="margin-left:auto; font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; background:rgba(169,139,99,0.12); border:1px solid rgba(169,139,99,0.3); color:#C9A96E; padding:6px 14px; border-radius:2px; cursor:pointer;">{{ copyYtLabel }}</button>
+      </div>
+
+      <!-- Título -->
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Título</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:14px; font-weight:600; color:#EDE6D8; line-height:1.5; margin-bottom:20px;">La soledad que te libera: lo que Marco Aurelio sabía y nadie te enseñó #estoicismo #soledad #marcoaurelio</div>
+
+      <!-- Descripción -->
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Descripción</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; color:#B8AF9C; line-height:1.7; white-space:pre-line; margin-bottom:20px;">¿Sufres cuando estás solo? No es la soledad el problema — eres tú huyendo de ti mismo.
+
+Marco Aurelio, el hombre más poderoso de Roma, se retiraba cada noche a escribirse a sí mismo. No porque fuera débil. Porque sabía que la fuente de todo bien está dentro.
+
+En este video aprenderás:
+• Por qué la soledad mal gestionada genera ansiedad
+• La distinción estoica entre soledad impuesta y elegida
+• Cómo Marco Aurelio la convirtió en su herramienta más poderosa
+
+👉 Suscríbete para una idea estoica cada día → @Stoa-Hoy
+
+━━━━━━━━━━━━━━━
+🔖 Más sobre estoicismo:
+• Dicotomía del control → próximamente
+• Memento Mori → próximamente
+━━━━━━━━━━━━━━━
+
+#estoicismo #filosofiaestoica #marcoaurelio #soledad #desarrollopersonal #meditaciones #stoicism #bienestar #saludmental #filosofia #inteligenciaemocional #vidainterior #autoconocimiento #mindset #stoic</div>
+
+      <!-- Tags -->
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Tags</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:12px; color:#7A7264; line-height:1.8;">estoicismo, marco aurelio, soledad, filosofía estoica, meditaciones marco aurelio, stoicism, desarrollopersonal, inteligencia emocional, bienestar mental, vida interior, autoconocimiento, mindset estoico, filosofia de vida, ansiedad soledad, estar solo, stoic philosophy</div>
+    </div>
+
+    <!-- Instagram -->
+    <div style="background:#18161299; border:1px solid rgba(169,139,99,0.18); border-radius:3px; padding:28px 32px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#ig)"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="#fff"/><defs><linearGradient id="ig" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse"><stop stop-color="#F9A825"/><stop offset="0.4" stop-color="#E91E63"/><stop offset="1" stop-color="#7B1FA2"/></linearGradient></defs></svg>
+        <span style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#A98B63;">Instagram</span>
+        <button onClick="{{ onCopyIg }}" style="margin-left:auto; font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; background:rgba(169,139,99,0.12); border:1px solid rgba(169,139,99,0.3); color:#C9A96E; padding:6px 14px; border-radius:2px; cursor:pointer;">{{ copyIgLabel }}</button>
+      </div>
+
+      <!-- Caption -->
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Caption</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; color:#B8AF9C; line-height:1.75; white-space:pre-line; margin-bottom:20px;">El problema no es la soledad. Eres tú huyendo de ti mismo. 🪞
+
+Marco Aurelio gobernó un imperio y cada noche se escribía a sí mismo. No era debilidad — era su práctica más poderosa.
+
+«Busca dentro de ti. Dentro está la fuente del bien.»
+— Meditaciones
+
+Hay dos tipos de soledad:
+→ La que te imponen (y duele)
+→ La que construyes (y te libera)
+
+El estoicismo no te pide que huyas del mundo. Te pide que aprendas a no necesitarlo para estar bien.
+
+¿Cuándo fue la última vez que estuviste bien contigo mismo sin pantallas, sin ruido, sin nada?
+
+💾 Guarda este video para cuando el silencio te incomode.
+
+─────────────────
+#estoicismo #marcoaurelio #soledad #filosofía #desarrollopersonal #stoicism #meditaciones #saludmental #autoconocimiento #bienestar #vidainterior #mindset #stoic #filosofiaestoica #inteligenciaemocional #crecimientopersonal #reflexion #estoico #marcoaurelioquotes #meditacionesmarcoaurelio</div>
+
+      <!-- Primer comentario -->
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(169,139,99,0.55); margin-bottom:6px;">Primer comentario (fija los hashtags)</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-size:12px; color:#7A7264; line-height:1.8;">#estoicismo #stoicism #marcoaurelio #filosofia #desarrollopersonal #soledad #mindset #autoconocimiento #bienestar #saludmental #crecimientopersonal #reflexion #estoico #stoic #meditaciones #inteligenciaemocional #vidainterior #filosofiaestoica #pensamiento #mentalidad</div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  _c = null;
+  state = { status: 'idle', progress: 0, platform: null, copiedYt: false, copiedIg: false };
+
+  _ytText() {
+    return `La soledad que te libera: lo que Marco Aurelio sabía y nadie te enseñó #estoicismo #soledad #marcoaurelio
+
+DESCRIPCIÓN:
+¿Sufres cuando estás solo? No es la soledad el problema — eres tú huyendo de ti mismo.
+
+Marco Aurelio, el hombre más poderoso de Roma, se retiraba cada noche a escribirse a sí mismo. No porque fuera débil. Porque sabía que la fuente de todo bien está dentro.
+
+En este video aprenderás:
+• Por qué la soledad mal gestionada genera ansiedad
+• La distinción estoica entre soledad impuesta y elegida
+• Cómo Marco Aurelio la convirtió en su herramienta más poderosa
+
+👉 Suscríbete para una idea estoica cada día → @Stoa-Hoy
+
+━━━━━━━━━━━━━━━
+🔖 Más sobre estoicismo:
+• Dicotomía del control → próximamente
+• Memento Mori → próximamente
+━━━━━━━━━━━━━━━
+
+TAGS:
+estoicismo, marco aurelio, soledad, filosofía estoica, meditaciones marco aurelio, stoicism, desarrollopersonal, inteligencia emocional, bienestar mental, vida interior, autoconocimiento, mindset estoico, filosofia de vida, ansiedad soledad, estar solo, stoic philosophy`;
+  }
+
+  _igText() {
+    return `El problema no es la soledad. Eres tú huyendo de ti mismo. 🪞
+
+Marco Aurelio gobernó un imperio y cada noche se escribía a sí mismo. No era debilidad — era su práctica más poderosa.
+
+«Busca dentro de ti. Dentro está la fuente del bien.»
+— Meditaciones
+
+Hay dos tipos de soledad:
+→ La que te imponen (y duele)
+→ La que construyes (y te libera)
+
+El estoicismo no te pide que huyas del mundo. Te pide que aprendas a no necesitarlo para estar bien.
+
+¿Cuándo fue la última vez que estuviste bien contigo mismo sin pantallas, sin ruido, sin nada?
+
+💾 Guarda este video para cuando el silencio te incomode.
+
+─────────────────
+#estoicismo #marcoaurelio #soledad #filosofía #desarrollopersonal #stoicism #meditaciones #saludmental #autoconocimiento #bienestar #vidainterior #mindset #stoic #filosofiaestoica #inteligenciaemocional #crecimientopersonal #reflexion #estoico #marcoaurelioquotes #meditacionesmarcoaurelio`;
+  }
+
+  async _copy(text, key) {
+    await navigator.clipboard.writeText(text);
+    this.setState({ [key]: true });
+    setTimeout(() => this.setState({ [key]: false }), 2000);
+  }
+
+  async startRecording(platform) {
+    const { status } = this.state;
+    if (status !== 'idle') return;
+    if (!window.MediaRecorder) { alert('Usa Chrome o Edge para grabar.'); return; }
+
+    const filename = platform === 'ig'
+      ? 'stoa-hoy-la-soledad-instagram.webm'
+      : 'stoa-hoy-la-soledad-youtube.webm';
+
+    this.setState({ status: 'loading', progress: 0, platform });
+
+    if (!window.htmlToImage) {
+      try {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js';
+          s.onload = res; s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      } catch(e) {
+        alert('Error cargando la librería de captura. Verifica tu conexión.');
+        this.setState({ status: 'idle', platform: null }); return;
+      }
+    }
+
+    let controls = null;
+    for (let i = 0; i < 60; i++) {
+      if (window.__stageControls) { controls = window.__stageControls; break; }
+      await new Promise(r => setTimeout(r, 200));
+    }
+    if (!controls) {
+      alert('La animación no ha cargado. Espera unos segundos e intenta de nuevo.');
+      this.setState({ status: 'idle', platform: null }); return;
+    }
+
+    function findStageDiv() {
+      for (const d of document.querySelectorAll('div')) {
+        if (d.offsetWidth === 1080 && d.offsetHeight === 1920) return d;
+      }
+      return null;
+    }
+    let stageDiv = null;
+    for (let i = 0; i < 30; i++) {
+      stageDiv = findStageDiv();
+      if (stageDiv) break;
+      await new Promise(r => setTimeout(r, 200));
+    }
+    if (!stageDiv) {
+      alert('No se encontró el área de animación. Espera que cargue.');
+      this.setState({ status: 'idle', platform: null }); return;
+    }
+
+    controls.setPlaying(false);
+    controls.setTime(0);
+    await new Promise(r => setTimeout(r, 500));
+
+    // Precargar fuentes como data URIs e inyectarlas en el stage
+    await document.fonts.ready;
+    let injectedStyle = null;
+    try {
+      const fontUrl = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap';
+      const cssText = await fetch(fontUrl).then(r => r.text());
+      const urlRegex = /url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/g;
+      let match; const urls = new Set();
+      while ((match = urlRegex.exec(cssText)) !== null) urls.add(match[1]);
+      let newCss = cssText;
+      for (const url of urls) {
+        try {
+          const blob = await fetch(url).then(r => r.blob());
+          const b64 = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
+          newCss = newCss.split(url).join(b64);
+        } catch(_) {}
+      }
+      injectedStyle = document.createElement('style');
+      injectedStyle.textContent = newCss;
+      stageDiv.prepend(injectedStyle);
+    } catch(_) {}
+    await new Promise(r => setTimeout(r, 600));
+    const W = 1080, H = 1920;
+
+    // Frame de calentamiento
+    try {
+      await window.htmlToImage.toCanvas(stageDiv, {
+        width: W, height: H, pixelRatio: 1,
+        style: { transform: 'none', transformOrigin: 'top left' },
+      });
+    } catch(_) {}
+    await new Promise(r => setTimeout(r, 300));
+    const outCanvas = document.createElement('canvas');
+    outCanvas.width = W; outCanvas.height = H;
+    const outCtx = outCanvas.getContext('2d');
+
+    const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+      ? 'video/webm;codecs=vp9' : 'video/webm';
+    const stream = outCanvas.captureStream(30);
+    const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12_000_000 });
+    const chunks = [];
+    recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: mime });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 8000);
+      this.setState({ status: 'done', progress: 100, platform });
+      setTimeout(() => this.setState({ status: 'idle', progress: 0, platform: null }), 4000);
+    };
+
+    window.__stoaPlatform = platform;
+    recorder.start(200);
+    controls.setPlaying(true);
+    this.setState({ status: 'recording', progress: 0, platform });
+
+    const DURATION_MS = 50 * 1000;
+    const startMs = performance.now();
+    const self = this;
+    let active = true;
+
+    const captureLoop = async () => {
+      if (!active) return;
+      const elapsed = performance.now() - startMs;
+      self.setState({ progress: Math.min(99, Math.round(elapsed / DURATION_MS * 100)) });
+
+      if (elapsed >= DURATION_MS + 500) {
+        active = false;
+        controls.setPlaying(false);
+        self.setState({ status: 'encoding', progress: 100 });
+        if (recorder.state !== 'inactive') recorder.stop();
+        return;
+      }
+
+      try {
+        const frameCanvas = await window.htmlToImage.toCanvas(stageDiv, {
+          width: W, height: H, pixelRatio: 1,
+          style: { transform: 'none', transformOrigin: 'top left' },
+        });
+        outCtx.drawImage(frameCanvas, 0, 0, W, H);
+      } catch(_) { /* frame perdido */ }
+
+      captureLoop();
+    };
+
+    captureLoop();
+  }
+
+  _mk() {
+    const { useTime, interpolate, Easing, Stage } = window;
+
+    const ACCENT     = '#A98B63';
+    const DARK_BG    = 'radial-gradient(125% 85% at 50% 8%, #25221B 0%, #1A1714 68%, #131210 100%)';
+    const LIGHT_BG   = 'radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%)';
+    const DARK_H     = '#EDE6D8';
+    const DARK_P     = '#DCD4C4';
+    const DARK_SUB   = '#B8AF9C';
+    const LIGHT_H    = '#26221C';
+    const LIGHT_P    = '#433D33';
+    const BRONZE     = 'linear-gradient(90deg, #7A5C32 0%, #C9A96E 30%, #E8C987 50%, #C9A96E 70%, #7A5C32 100%)';
+
+    const ACCENT_BRIGHT = '#C9A96E';
+
+    function eOut(p) { return 1 - Math.pow(1 - Math.min(1, Math.max(0, p)), 3); }
+    function fi(t, s, d) { return Math.min(1, Math.max(0, (t - s) / (d || 0.5))); }
+    function fo(t, e, d) { return Math.min(1, Math.max(0, (e - t) / (d || 0.35))); }
+    function fade(t, s, e, id, od) { return Math.min(fi(t, s, id || 0.55), fo(t, e, od || 0.35)); }
+    function sy(t, s, d, dist) { return interpolate([0, 1], [dist || 24, 0])(eOut(fi(t, s, d || 0.55))); }
+    function lw(t, s, d) { return interpolate([0, 1], [0, 56])(eOut(fi(t, s, d || 0.45))); }
+    function tx(t, s, d, dist) { return interpolate([0, 1], [dist || 36, 0])(eOut(fi(t, s, d || 0.5))); }
+
+    function BronzeLine() {
+      return React.createElement('div', { style: { position: 'absolute', top: 0, left: 0, right: 0, height: 8, background: BRONZE, zIndex: 10 } });
+    }
+    function Mark({ t, s, e, light }) {
+      return React.createElement('div', { style: { position: 'absolute', bottom: 96, left: 108, fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 22, fontWeight: 600, letterSpacing: '0.28em', textTransform: 'uppercase', color: light ? 'rgba(124,96,56,0.38)' : 'rgba(169,139,99,0.4)', opacity: fade(t, s+0.5, e, 0.5, 0.35) } }, 'STOA · HOY');
+    }
+    function Flash({ at }) {
+      const t = useTime();
+      const op = Math.max(0, 1 - Math.abs(t - at) / 0.1);
+      return React.createElement('div', { style: { position: 'absolute', inset: 0, background: '#fff', opacity: op * 0.12, pointerEvents: 'none', zIndex: 100 } });
+    }
+
+    // ── SLIDE 01: Portada (0–9s) ────────────────────────────────────────
+    function Slide01() {
+      const t = useTime(); const s = 0; const e = 9;
+      if (t > e + 0.5) return null;
+      const outerC = 2 * Math.PI * 260; const innerC = 2 * Math.PI * 158;
+      const circP  = Math.min(1, Math.max(0, (t - 0.5) / 4));
+      const dotR   = interpolate([0, 1], [0, 10])(Math.min(1, Math.max(0, (t - 5) / 0.8)));
+      return React.createElement('div', {
+        style: { position: 'absolute', inset: 0, background: '#1A1714', color: DARK_H, fontFamily: "'Cormorant Garamond',serif", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '140px 108px', opacity: fo(t, e, 0.4) }
+      },
+        React.createElement(BronzeLine),
+        React.createElement('div', { style: { position: 'absolute', top: 140, left: 108, fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 28, fontWeight: 600, letterSpacing: '0.34em', textTransform: 'uppercase', color: ACCENT, opacity: fade(t, 0.2, e, 0.5, 0.4) } }, 'Estoicismo · Marco Aurelio'),
+        React.createElement('svg', { width: 520, height: 520, viewBox: '-270 -270 540 540', style: { overflow: 'visible', marginBottom: 52, opacity: circP } },
+          React.createElement('line', { x1: 0, y1: -260, x2: 0, y2: 260, stroke: 'rgba(169,139,99,0.14)', strokeWidth: 1 }),
+          React.createElement('line', { x1: -260, y1: 0, x2: 260, y2: 0, stroke: 'rgba(169,139,99,0.14)', strokeWidth: 1 }),
+          React.createElement('circle', { cx: 0, cy: 0, r: 260, fill: 'none', stroke: 'rgba(169,139,99,0.45)', strokeWidth: 1.5, strokeDasharray: `${circP * outerC} ${outerC}`, transform: 'rotate(-90)' }),
+          React.createElement('circle', { cx: 0, cy: 0, r: 158, fill: 'none', stroke: 'rgba(169,139,99,0.28)', strokeWidth: 1, strokeDasharray: `${Math.max(0, (circP - 0.25) / 0.75) * innerC} ${innerC}`, transform: 'rotate(-90)' }),
+          React.createElement('circle', { cx: 0, cy: 0, r: dotR, fill: ACCENT })
+        ),
+        React.createElement('div', { style: { width: 56, height: 2, background: ACCENT, marginBottom: 36, opacity: fade(t, 5, e, 0.6, 0.4) } }),
+        React.createElement('h1', { style: { fontSize: 168, fontWeight: 600, lineHeight: 0.92, letterSpacing: '-0.01em', margin: '0 0 0', opacity: fade(t, 5.2, e, 0.6, 0.4), transform: `translateY(${sy(t, 5.2, 0.6, 32)}px)` } }, 'La'),
+        React.createElement('h1', { style: { fontSize: 168, fontWeight: 600, lineHeight: 0.92, letterSpacing: '-0.01em', margin: '0 0 36px', opacity: fade(t, 5.4, e, 0.6, 0.4), transform: `translateY(${sy(t, 5.4, 0.6, 28)}px)` } }, 'soledad'),
+        React.createElement('p', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 42, fontWeight: 400, color: DARK_SUB, letterSpacing: '0.02em', opacity: fade(t, 7, e, 0.5, 0.4), transform: `translateY(${sy(t, 7, 0.5, 20)}px)` } }, 'Aprende a estar bien contigo mismo'),
+        React.createElement('div', { style: { position: 'absolute', bottom: 96, left: 108, right: 108, display: 'flex', justifyContent: 'space-between', fontFamily: "'Hanken Grotesk',sans-serif", opacity: fade(t, 0.2, e, 0.5, 0.4) } },
+          React.createElement('div', { style: { fontSize: 26, fontWeight: 600, letterSpacing: '0.2em', color: '#C9C0AD' } }, 'STOA · HOY'),
+          React.createElement('div', { style: { fontSize: 24, letterSpacing: '0.22em', textTransform: 'uppercase', color: ACCENT } }, 'Desliza →')
+        )
+      );
+    }
+
+    // ── SLIDE 02: El diagnóstico (9–20s) ────────────────────────────────
+    function Slide02() {
+      const t = useTime(); const s = 9; const e = 20;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position: 'absolute', inset: 0, background: DARK_BG, color: DARK_H, fontFamily: "'Cormorant Garamond',serif", display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 108px', opacity: Math.min(fi(t, s, 0.3), fo(t, e, 0.3)) }
+      },
+        React.createElement(BronzeLine),
+        React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 28, fontWeight: 600, letterSpacing: '0.34em', textTransform: 'uppercase', color: ACCENT, marginBottom: 52, opacity: fade(t, s+0.2, e, 0.4, 0.3), transform: `translateY(${sy(t, s+0.2, 0.4, 18)}px)` } }, 'El problema'),
+        React.createElement('h2', { style: { fontSize: 108, fontWeight: 600, lineHeight: 1.02, letterSpacing: '-0.01em', color: DARK_H, textWrap: 'balance', margin: '0 0 52px', opacity: fade(t, s+0.35, e, 0.5, 0.3), transform: `translateY(${sy(t, s+0.35, 0.5, 28)}px)` } }, 'Sufrimos por no saber estar con nosotros mismos'),
+        React.createElement('div', { style: { width: lw(t, s+0.7) + 'px', height: 2, background: ACCENT, marginBottom: 52 } }),
+        React.createElement('p', { style: { fontSize: 56, fontWeight: 400, lineHeight: 1.38, color: DARK_P, textWrap: 'pretty', maxWidth: 820, opacity: fade(t, s+0.85, e, 0.5, 0.3), transform: `translateY(${sy(t, s+0.85, 0.5, 18)}px)` } }, 'Llenamos el silencio de ruido, buscamos validación externa y nos cuesta parar. No es la soledad lo que molesta. Somos nosotros.'),
+        React.createElement(Mark, { t, s, e })
+      );
+    }
+
+    // ── SLIDE 03: Cita (20–32s) ──────────────────────────────────────────
+    function Slide03() {
+      const t = useTime(); const s = 20; const e = 32;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position: 'absolute', inset: 0, background: LIGHT_BG, color: LIGHT_H, fontFamily: "'Cormorant Garamond',serif", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 108px', opacity: Math.min(fi(t, s, 0.3), fo(t, e, 0.3)) }
+      },
+        React.createElement(BronzeLine),
+        React.createElement('div', { style: { position: 'absolute', top: 140, left: 108, fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 28, fontWeight: 600, letterSpacing: '0.34em', textTransform: 'uppercase', color: ACCENT, opacity: fade(t, s+0.1, e, 0.4, 0.3) } }, 'Marco Aurelio'),
+        React.createElement('div', { style: { fontSize: 200, lineHeight: 0.5, color: ACCENT, fontWeight: 600, height: 80, alignSelf: 'flex-start', opacity: fade(t, s+0.3, e, 0.4, 0.3) } }, '"'),
+        React.createElement('blockquote', { style: { fontSize: 90, fontWeight: 500, fontStyle: 'italic', lineHeight: 1.15, letterSpacing: '-0.01em', textWrap: 'pretty', margin: '40px 0 52px' } },
+          React.createElement('span', { style: { opacity: fade(t, s+0.5, e, 0.6, 0.3) } }, 'Busca dentro de ti. '),
+          React.createElement('span', { style: { opacity: fade(t, s+3, e, 0.6, 0.3) } }, 'Dentro está la fuente del bien.')
+        ),
+        React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 34, fontWeight: 500, letterSpacing: '0.04em', color: '#7C7361', opacity: fade(t, s+6, e, 0.5, 0.3), transform: `translateY(${sy(t, s+6, 0.5, 14)}px)` } },
+          '— Marco Aurelio, ', React.createElement('span', { style: { fontStyle: 'italic', fontFamily: "'Cormorant Garamond',serif", fontSize: 40 } }, 'Meditaciones')
+        ),
+        React.createElement('div', { style: { position: 'absolute', bottom: 96, fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 26, letterSpacing: '0.04em', color: '#8A8170', lineHeight: 1.55, opacity: fade(t, s+9, e, 0.5, 0.3) } }, 'El hombre más poderoso del mundo se retiraba cada noche a escribirse a sí mismo.')
+      );
+    }
+
+    // ── SLIDE 04: Dos tipos de soledad (32–43s) ──────────────────────────
+    function Slide04() {
+      const t = useTime(); const s = 32; const e = 43;
+      if (t < s - 0.5 || t > e + 0.5) return null;
+      return React.createElement('div', {
+        style: { position: 'absolute', inset: 0, background: DARK_BG, color: DARK_H, fontFamily: "'Cormorant Garamond',serif", display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 108px', opacity: Math.min(fi(t, s, 0.3), fo(t, e, 0.3)) }
+      },
+        React.createElement(BronzeLine),
+        React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 28, fontWeight: 600, letterSpacing: '0.34em', textTransform: 'uppercase', color: ACCENT, marginBottom: 52, opacity: fade(t, s+0.2, e, 0.4, 0.3), transform: `translateY(${sy(t, s+0.2, 0.4, 18)}px)` } }, 'La distinción'),
+        React.createElement('h2', { style: { fontSize: 108, fontWeight: 600, lineHeight: 1.0, letterSpacing: '-0.01em', color: DARK_H, textWrap: 'balance', margin: '0 0 52px', opacity: fade(t, s+0.35, e, 0.5, 0.3), transform: `translateY(${sy(t, s+0.35, 0.5, 28)}px)` } }, 'Dos tipos de soledad'),
+        React.createElement('div', { style: { width: lw(t, s+0.7) + 'px', height: 2, background: ACCENT, marginBottom: 52 } }),
+        React.createElement('p', { style: { fontSize: 56, fontWeight: 400, lineHeight: 1.38, color: DARK_P, textWrap: 'pretty', maxWidth: 820, opacity: fade(t, s+0.85, e, 0.5, 0.3), transform: `translateY(${sy(t, s+0.85, 0.5, 18)}px)` } }, 'Una te la imponen. La otra la construyes. Marco Aurelio gobernó un imperio y aprendió a no necesitarlo para estar bien consigo mismo.'),
+        React.createElement(Mark, { t, s, e })
+      );
+    }
+
+    // ── SLIDE 05 Instagram: cita de cierre + tarjetas (43–50s) ─────────────
+    function Slide05Instagram() {
+      const t = useTime(); const s = 43; const e = 50;
+      if (t < s - 0.5) return null;
+      return React.createElement('div', {
+        style: { position: 'absolute', inset: 0, background: LIGHT_BG, color: LIGHT_H, fontFamily: "'Cormorant Garamond',serif", display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 108px', opacity: Math.min(fi(t, s, 0.3), fo(t, e, 0.3)) }
+      },
+        React.createElement(BronzeLine),
+        React.createElement('div', { style: { position: 'absolute', top: 140, left: 108, fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 28, fontWeight: 600, letterSpacing: '0.34em', textTransform: 'uppercase', color: ACCENT, opacity: fade(t, s+0.1, e, 0.4, 0.3) } }, 'Para recordar'),
+        React.createElement('div', { style: { fontSize: 200, lineHeight: 0.5, color: ACCENT, fontWeight: 600, height: 80, opacity: fade(t, s+0.2, e, 0.4, 0.3) } }, '"'),
+        React.createElement('blockquote', { style: { fontSize: 80, fontWeight: 500, lineHeight: 1.2, letterSpacing: '-0.01em', textWrap: 'pretty', margin: '40px 0 44px', opacity: fade(t, s+0.5, e, 0.6, 0.3), transform: `translateY(${sy(t, s+0.5, 0.6, 28)}px)` } }, 'El que no sabe estar solo no sabe estar.'),
+        React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 34, fontWeight: 500, letterSpacing: '0.04em', color: '#7C7361', marginBottom: 64, opacity: fade(t, s+2, e, 0.5, 0.3), transform: `translateY(${sy(t, s+2, 0.5, 14)}px)` } },
+          '— Marco Aurelio, ', React.createElement('span', { style: { fontStyle: 'italic', fontFamily: "'Cormorant Garamond',serif", fontSize: 40 } }, 'Meditaciones')
+        ),
+        React.createElement('div', { style: { display: 'flex', gap: 24, opacity: fade(t, s+3.5, e, 0.6, 0.3), transform: `translateY(${sy(t, s+3.5, 0.6, 24)}px)` } },
+          React.createElement('div', { style: { flex: 1, border: '1px solid rgba(124,96,56,0.35)', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 14 } },
+            React.createElement('svg', { width: 44, height: 44, viewBox: '0 0 24 24', fill: 'none' }, React.createElement('path', { d: 'M5 3H19C19.5523 3 20 3.44772 20 4V21.2768C20 21.6173 19.6114 21.8265 19.3299 21.634L12 16.8689L4.67009 21.634C4.38858 21.8265 4 21.6173 4 21.2768V4C4 3.44772 4.44772 3 5 3Z', stroke: LIGHT_H, strokeWidth: 1.8, strokeLinejoin: 'round' })),
+            React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 32, fontWeight: 700, color: LIGHT_H } }, 'Guarda este video'),
+            React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 26, color: '#7C7361', lineHeight: 1.4 } }, 'Para volver cuando el silencio te incomode.')
+          ),
+          React.createElement('div', { style: { flex: 1, background: 'rgba(124,96,56,0.07)', border: '1px solid rgba(124,96,56,0.35)', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 14 } },
+            React.createElement('svg', { width: 44, height: 44, viewBox: '0 0 24 24', fill: 'none' },
+              React.createElement('circle', { cx: 10, cy: 8, r: 4, stroke: ACCENT, strokeWidth: 1.8 }),
+              React.createElement('path', { d: 'M2 20C2 17.2386 5.58172 15 10 15', stroke: ACCENT, strokeWidth: 1.8, strokeLinecap: 'round' }),
+              React.createElement('path', { d: 'M18 14V20M15 17H21', stroke: ACCENT, strokeWidth: 1.8, strokeLinecap: 'round' })
+            ),
+            React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 32, fontWeight: 700, color: ACCENT } }, 'Sígueme en Instagram'),
+            React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 28, fontWeight: 600, color: ACCENT_BRIGHT, letterSpacing: '0.06em' } }, '@Stoa.Hoy')
+          )
+        )
+      );
+    }
+
+    // ── SLIDE 05 YouTube: SUSCRÍBETE (43–50s) ───────────────────────────────
+    function Slide05YouTube() {
+      const t = useTime(); const s = 43; const e = 50;
+      if (t < s - 0.5) return null;
+      return React.createElement('div', {
+        style: { position: 'absolute', inset: 0, background: DARK_BG, color: DARK_H, fontFamily: "'Cormorant Garamond',serif", display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 108px', opacity: Math.min(fi(t, s, 0.3), fo(t, e, 0.3)) }
+      },
+        React.createElement(BronzeLine),
+        React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 22, fontWeight: 600, letterSpacing: '0.34em', textTransform: 'uppercase', color: ACCENT, marginBottom: 72, opacity: fade(t, s+0.1, e, 0.5, 0.3) } }, 'STOA · HOY'),
+        React.createElement('div', { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 44, fontStyle: 'italic', fontWeight: 500, color: DARK_SUB, marginBottom: 12, opacity: fade(t, s+0.2, e, 0.55, 0.3), transform: `translateY(${sy(t, s+0.2, 0.5, 20)}px)` } }, 'Si esto te hizo pensar,'),
+        React.createElement('h1', { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 148, fontWeight: 600, lineHeight: 0.96, letterSpacing: '-0.02em', color: DARK_H, margin: 0, opacity: fade(t, s+0.28, e, 0.55, 0.3), transform: `translateY(${sy(t, s+0.28, 0.55, 32)}px)` } }, 'SUSCRÍBETE'),
+        React.createElement('div', { style: { width: lw(t, s+0.52) + 'px', height: 3, background: ACCENT, margin: '48px 0 42px' } }),
+        React.createElement('p', { style: { fontSize: 52, fontStyle: 'italic', fontWeight: 500, color: DARK_P, lineHeight: 1.35, margin: 0, textWrap: 'pretty', maxWidth: 820, opacity: fade(t, s+0.68, e, 0.5, 0.3), transform: `translateY(${sy(t, s+0.68, 0.5, 16)}px)` } }, 'Cada día, una idea que cambia cómo ves el mundo.'),
+        React.createElement('div', { style: { marginTop: 80, opacity: fade(t, s+0.88, e, 0.45, 0.3), transform: `translateY(${sy(t, s+0.88, 0.45, 12)}px)` } },
+          React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 32, fontWeight: 600, letterSpacing: '0.16em', color: ACCENT } }, '@Stoa-Hoy'),
+          React.createElement('div', { style: { fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 22, color: '#6A6358', letterSpacing: '0.04em', marginTop: 10 } }, 'YouTube · Estoicismo diario')
+        )
+      );
+    }
+
+    // ── Switcher ─────────────────────────────────────────────────────────────
+    function Slide05() {
+      return (window.__stoaPlatform || 'ig') === 'yt'
+        ? React.createElement(Slide05YouTube)
+        : React.createElement(Slide05Instagram);
+    }
+
+    const cuts = [9, 20, 32, 43];
+    function SoledadVideo() {
+      return React.createElement(Stage, { width: 1080, height: 1920, duration: 50, background: '#131210' },
+        React.createElement(Slide01), React.createElement(Slide02), React.createElement(Slide03),
+        React.createElement(Slide04), React.createElement(Slide05),
+        ...cuts.map(at => React.createElement(Flash, { key: at, at }))
+      );
+    }
+    window.SoledadVideo = SoledadVideo;
+    this.forceUpdate();
+  }
+
+  renderVals() {
+    const { status, progress, platform } = this.state;
+    const busy = status !== 'idle';
+    const labels = {
+      idle:      '⏺  Grabar y descargar',
+      loading:   'Cargando…',
+      recording: `⏹  Grabando ${progress}%`,
+      encoding:  'Generando archivo…',
+      done:      '✓  Descargado',
+    };
+    const hints = {
+      idle:      'Captura el video completo (50s) y descarga el .webm',
+      loading:   'Cargando motor de captura…',
+      recording: 'No cierres esta pestaña · se detiene automáticamente',
+      encoding:  'Empaquetando el video…',
+      done:      'Archivo stoa-hoy-la-soledad.webm en tus descargas',
+    };
+
+    const shared = {
+      onCopyYt:    () => this._copy(this._ytText(), 'copiedYt'),
+      onCopyIg:    () => this._copy(this._igText(), 'copiedIg'),
+      copyYtLabel: this.state.copiedYt ? '✓ Copiado' : 'Copiar todo',
+      copyIgLabel: this.state.copiedIg ? '✓ Copiado' : 'Copiar todo',
+    };
+
+    if (!window.SoledadVideo) {
+      if (!this._building) {
+        this._building = true;
+        const poll = () => {
+          if (!window.Stage || !window.useTime || !window.interpolate) { setTimeout(poll, 50); return; }
+          this._mk();
+        };
+        poll();
+      }
+      return {
+        ...shared,
+        onRecordIg: () => this.startRecording('ig'),
+        onRecordYt: () => this.startRecording('yt'),
+        labelIg: '⏺ Instagram', labelYt: '⏺ YouTube Shorts',
+        btnIg: 'idle', btnYt: 'idle',
+        recordHint: hints[status] || hints.idle,
+      };
+    }
+
+    return {
+      ...shared,
+      onRecordIg:  () => this.startRecording('ig'),
+      onRecordYt:  () => this.startRecording('yt'),
+      labelIg:     !busy || platform !== 'ig' ? '⏺ Instagram' : labels[status],
+      labelYt:     !busy || platform !== 'yt' ? '⏺ YouTube Shorts' : labels[status],
+      btnIg:       platform === 'ig' ? status : (busy ? 'other' : 'idle'),
+      btnYt:       platform === 'yt' ? status : (busy ? 'other' : 'idle'),
+      recordHint:  hints[status] || hints.idle,
+    };
+  }
+}
+</script>
+</body>
+</html>

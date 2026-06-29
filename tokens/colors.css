@@ -1,0 +1,42 @@
+:root {
+
+  /* ── Mármol claro (fondos) ─────────────────────────────────── */
+  --cream-50:  #FAF8F3;
+  --cream-100: #F6F2EA;
+  --cream-200: #ECE6DA;
+  --cream-300: #E3DBCB;
+  --cream-400: #D8D4CB;
+
+  /* ── Carbón oscuro (fondos) ────────────────────────────────── */
+  --ink-500: #433D33;
+  --ink-600: #2E2920;
+  --ink-700: #25221B;
+  --ink-800: #1A1714;
+  --ink-900: #131210;
+
+  /* ── Texto sobre claro ──────────────────────────────────────── */
+  --text-primary-light:   #26221C;
+  --text-secondary-light: #433D33;
+  --text-muted-light:     #8A8170;
+  --text-subtle-light:    #A39A86;
+
+  /* ── Texto sobre oscuro ─────────────────────────────────────── */
+  --text-primary-dark:  #EDE6D8;
+  --text-secondary-dark: #DCD4C4;
+  --text-muted-dark:    #9A917E;
+  --text-subtle-dark:   #8C8472;
+
+  /* ── Acento bronce ──────────────────────────────────────────── */
+  --accent:        #A98B63;
+  --accent-soft:   rgba(169, 139, 99, 0.5);
+  --accent-faint:  rgba(169, 139, 99, 0.18);
+
+  /* ── Superficies (gradiente radial) ─────────────────────────── */
+  --surface-light: radial-gradient(125% 85% at 22% 0%, #F6F2EA 0%, #ECE6DA 58%, #E3DBCB 100%);
+  --surface-dark:  radial-gradient(125% 85% at 50% 10%, #25221B 0%, #1A1714 68%, #131210 100%);
+  --canvas-bg:     #D8D4CB;
+
+  /* ── Separadores ─────────────────────────────────────────────── */
+  --border-light: rgba(124, 115, 97, 0.22);
+  --border-dark:  rgba(237, 230, 216, 0.14);
+}

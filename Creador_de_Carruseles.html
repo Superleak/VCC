@@ -10,6 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- html2canvas para exportar PNGs sin servidor local -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- JSZip para empaquetar descargas en una sola carpeta/zip -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <style>
     /* ── RESET Y VARIABLES DEL EDITOR ── */
@@ -230,7 +232,8 @@
 
     .toggle-group {
       display: flex;
-      gap: 20px;
+      flex-direction: column;
+      gap: 10px;
       margin-bottom: 16px;
     }
 
@@ -735,6 +738,24 @@
       color: var(--text-muted);
     }
 
+    /* Marca de agua ligera */
+    .slide-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-family: var(--font-sans);
+      font-size: 76px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text-main);
+      opacity: 0.045;
+      pointer-events: none;
+      z-index: 100;
+      white-space: nowrap;
+      text-transform: lowercase;
+    }
+
     /* Panel de Carga / Modal */
     .modal-overlay {
       position: fixed;
@@ -898,6 +919,9 @@
         <label class="toggle-container">
           <input type="checkbox" id="showDragHint" checked onchange="updateMeta()"> Mostrar "Desliza →"
         </label>
+        <label class="toggle-container">
+          <input type="checkbox" id="showWatermark" checked onchange="updateMeta()"> Marca de agua (@stoa.hoy)
+        </label>
       </div>
 
       <div class="form-row" style="margin-bottom: 24px;">
@@ -928,24 +952,39 @@
       <div class="section-title">Textos de Redes (SEO)</div>
       
       <div class="form-group">
-        <label>YouTube Título</label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="margin-bottom: 0;">YouTube Título</label>
+          <button class="btn btn-secondary btn-mini" onclick="copyToClipboard('seoYtTitle', this)" style="padding: 2px 8px; font-size: 10.5px; height: auto;">Copiar</button>
+        </div>
         <input type="text" id="seoYtTitle" oninput="updateSeo()">
       </div>
       <div class="form-group">
-        <label>YouTube Descripción</label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="margin-bottom: 0;">YouTube Descripción</label>
+          <button class="btn btn-secondary btn-mini" onclick="copyToClipboard('seoYtDesc', this)" style="padding: 2px 8px; font-size: 10.5px; height: auto;">Copiar</button>
+        </div>
         <textarea id="seoYtDesc" oninput="updateSeo()"></textarea>
       </div>
       <div class="form-group">
-        <label>YouTube Tags</label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="margin-bottom: 0;">YouTube Tags</label>
+          <button class="btn btn-secondary btn-mini" onclick="copyToClipboard('seoYtTags', this)" style="padding: 2px 8px; font-size: 10.5px; height: auto;">Copiar</button>
+        </div>
         <input type="text" id="seoYtTags" oninput="updateSeo()">
       </div>
 
       <div class="form-group">
-        <label>Instagram Caption</label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="margin-bottom: 0;">Instagram Caption</label>
+          <button class="btn btn-secondary btn-mini" onclick="copyToClipboard('seoIgCaption', this)" style="padding: 2px 8px; font-size: 10.5px; height: auto;">Copiar</button>
+        </div>
         <textarea id="seoIgCaption" oninput="updateSeo()"></textarea>
       </div>
       <div class="form-group">
-        <label>Instagram Primer Comentario</label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="margin-bottom: 0;">Instagram Primer Comentario</label>
+          <button class="btn btn-secondary btn-mini" onclick="copyToClipboard('seoIgComment', this)" style="padding: 2px 8px; font-size: 10.5px; height: auto;">Copiar</button>
+        </div>
         <textarea id="seoIgComment" oninput="updateSeo()"></textarea>
       </div>
     </div>
@@ -986,6 +1025,7 @@
         },
         showNumbers: true,
         showDragHint: true,
+        showWatermark: true,
         accentColor: "#A98B63",
         slides: [
           {
@@ -1122,6 +1162,7 @@
       
       document.getElementById("showNumbers").checked = currentCarrusel.showNumbers !== false;
       document.getElementById("showDragHint").checked = currentCarrusel.showDragHint !== false;
+      document.getElementById("showWatermark").checked = currentCarrusel.showWatermark !== false;
       document.getElementById("numSlidesInput").value = currentCarrusel.slides.length;
 
       // Restaurar plataforma
@@ -1187,6 +1228,7 @@
 
       currentCarrusel.showNumbers = document.getElementById("showNumbers").checked;
       currentCarrusel.showDragHint = document.getElementById("showDragHint").checked;
+      currentCarrusel.showWatermark = document.getElementById("showWatermark").checked;
       currentCarrusel.platform = currentPlatform;
 
       // Actualizar variables de acento CSS en tiempo real
@@ -1203,6 +1245,27 @@
       currentCarrusel.seo.yt.tags = document.getElementById("seoYtTags").value;
       currentCarrusel.seo.ig.caption = document.getElementById("seoIgCaption").value;
       currentCarrusel.seo.ig.primerComentario = document.getElementById("seoIgComment").value;
+    }
+
+    // Copiar contenido al portapapeles con feedback visual
+    function copyToClipboard(elementId, btn) {
+      const input = document.getElementById(elementId);
+      if (!input) return;
+
+      const text = input.value;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = "✓ Copiado";
+        btn.style.borderColor = "#A98B63";
+        btn.style.color = "#A98B63";
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.style.borderColor = "";
+          btn.style.color = "";
+        }, 1500);
+      }).catch(err => {
+        console.error("Error al copiar al portapapeles: ", err);
+      });
     }
 
     // Renderizar la lista de editores de láminas (Acordeón)
@@ -1681,7 +1744,12 @@
         realNode.style.setProperty('--accent-faint', hexToRgba(accentColor, 0.18));
 
         // Rellenar estructura HTML de la lámina basándonos en el tipo
-        realNode.innerHTML = getSlideHtml(slide, index);
+        // Rellenar estructura HTML de la lámina basándonos en el tipo
+        let slideHtml = getSlideHtml(slide, index);
+        if (currentCarrusel.showWatermark !== false) {
+          slideHtml += `<div class="slide-watermark">@stoa.hoy</div>`;
+        }
+        realNode.innerHTML = slideHtml;
 
         outerBox.appendChild(realNode);
         itemWrap.appendChild(outerBox);
@@ -1840,7 +1908,7 @@
             <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 108px;">
               <div style="font-family:var(--font-sans);font-size:28px;font-weight:600;letter-spacing:0.34em;text-transform:uppercase;color:var(--accent);margin-bottom:36px;position:absolute;top:104px;left:108px;">Para recordar</div>
               <div style="font-size:200px;line-height:0.5;color:var(--accent);font-weight:600;height:80px;margin-bottom:40px;font-family:var(--font-display);">&#8220;</div>
-              <blockquote style="font-size:80px;font-weight:500;font-style:italic;line-height:1.18;letter-spacing:-0.01em;margin-bottom:44px;font-family:var(--font-display);">${slide.cita || ''}</blockquote>
+              <blockquote style="font-size:var(--text-quote-md);font-weight:500;font-style:italic;line-height:1.18;letter-spacing:-0.01em;margin-bottom:44px;font-family:var(--font-display);">${slide.cita || ''}</blockquote>
               <div style="font-family:var(--font-sans);font-size:32px;font-weight:500;letter-spacing:0.04em;color:var(--text-subtle);margin-bottom:72px;">— ${slide.atribucion || 'Filósofo'}</div>
               <div style="display:flex;gap:24px;">
                 <div style="flex:1;border:1px solid rgba(169,139,99,0.35);padding:32px;display:flex;flex-direction:column;gap:16px;">
@@ -2003,10 +2071,14 @@
       setTimeout(() => URL.revokeObjectURL(url), 2000);
     }
 
-    // ── EXPORTACIÓN DE IMÁGENES PNG (HTML2CANVAS) ──
+    // ── EXPORTACIÓN DE IMÁGENES PNG (HTML2CANVAS Y JSZIP) ──
     async function exportPngs() {
       if (!window.html2canvas) {
         alert("La librería html2canvas no está disponible. Conéctate a internet para cargarla.");
+        return;
+      }
+      if (!window.JSZip) {
+        alert("La librería JSZip no está disponible. Conéctate a internet para cargarla.");
         return;
       }
 
@@ -2016,6 +2088,14 @@
       overlay.style.display = "flex";
       
       const totalSlides = currentCarrusel.slides.length;
+      const zip = new JSZip();
+
+      const temaClean = (currentCarrusel.meta.tema || "stoa")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
       
       // Procesar cada lámina secuencialmente para evitar sobrecargar la memoria
       for (let i = 0; i < totalSlides; i++) {
@@ -2025,7 +2105,7 @@
         const realNode = document.getElementById(`slideNode-${i}`);
         
         // Hacemos una pausa breve para que el navegador procese el render
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 200));
 
         // Seleccionamos el color de fondo y dimensiones para pasárselo a html2canvas
         const isDark = currentCarrusel.slides[i].theme === 'dark';
@@ -2077,34 +2157,28 @@
         const ctx = outCanvas.getContext('2d');
         ctx.drawImage(canvas, 0, 0, exportW, exportH);
 
-        // Convertir y descargar
+        // Convertir a blob y guardar en el ZIP
         await new Promise(resolve => {
           outCanvas.toBlob(blob => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            
-            const temaClean = (currentCarrusel.meta.tema || "stoa")
-              .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, "-")
-              .replace(/^-+|-+$/g, "");
             const slideType = currentCarrusel.slides[i].tipo;
-            a.download = `stoa-hoy-${temaClean}-${String(i + 1).padStart(2, '0')}-${slideType}.png`;
-            
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            setTimeout(() => URL.revokeObjectURL(url), 2000);
+            const filename = `stoa-hoy-${temaClean}-${String(i + 1).padStart(2, '0')}-${slideType}.png`;
+            zip.file(filename, blob);
             resolve();
           }, 'image/png');
         });
-
-        // Pausa entre descargas para estabilidad en navegadores móviles/escritorio
-        await new Promise(r => setTimeout(r, 1000));
       }
+
+      progressText.innerText = "Empaquetando en ZIP...";
+      const zipContent = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(zipContent);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${temaClean}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
 
       progressText.innerText = "¡Todo exportado con éxito!";
       setTimeout(() => {

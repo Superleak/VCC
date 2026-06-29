@@ -1555,6 +1555,15 @@
         btnIG.style.background = '#27231f'; btnIG.style.color = '#8c8472';
         hint.innerText = '9:16 · 1080×1920 px · YouTube Shorts';
       }
+      if (currentCarrusel) {
+        currentCarrusel.platform = platform;
+        const isYt = platform === 'youtube';
+        const info = document.getElementById("carruselInfo");
+        if (info) {
+          info.innerText = `${currentCarrusel.slides.length} Láminas · 1080 × ${isYt ? '1920' : '1350'} px`;
+        }
+        renderPreviews();
+      }
     }
 
     function getFriendlySlideTypeName(type) {
@@ -1711,6 +1720,7 @@
       grid.innerHTML = "";
 
       const accentColor = currentCarrusel.accentColor || "#A98B63";
+      const isYtPlatform = currentPlatform === 'youtube';
 
       currentCarrusel.slides.forEach((slide, index) => {
         const itemWrap = document.createElement("div");
@@ -1725,10 +1735,9 @@
         `;
         itemWrap.appendChild(labelBar);
 
-        // Caja contenedora que recorta el 1080x1350 escalado a 0.3
-        const isCTAyt = slide.tipo === 'cta-yt';
+        // Caja contenedora que recorta el 1080x1350 o 1080x1920 escalado a 0.3
         const previewW = 324;
-        const previewH = isCTAyt ? 576 : 405;
+        const previewH = isYtPlatform ? 576 : 405; // 1920 * 0.3 = 576, 1350 * 0.3 = 405
         const outerBox = document.createElement("div");
         outerBox.className = "slide-outer-box";
         outerBox.style.width = previewW + 'px';
@@ -1743,11 +1752,22 @@
         realNode.style.setProperty('--accent-soft', hexToRgba(accentColor, 0.5));
         realNode.style.setProperty('--accent-faint', hexToRgba(accentColor, 0.18));
 
-        // Rellenar estructura HTML de la lámina basándonos en el tipo
+        // Ajustar altura y padding según la plataforma
+        const exportW = 1080;
+        const exportH = isYtPlatform ? 1920 : 1350;
+        realNode.style.width = exportW + 'px';
+        realNode.style.height = exportH + 'px';
+        if (isYtPlatform) {
+          realNode.style.padding = '120px 96px';
+        } else {
+          realNode.style.padding = '100px 96px';
+        }
+
         // Rellenar estructura HTML de la lámina basándonos en el tipo
         let slideHtml = getSlideHtml(slide, index);
         if (currentCarrusel.showWatermark !== false) {
-          slideHtml += `<div class="slide-watermark">@stoa.hoy</div>`;
+          const watermarkText = isYtPlatform ? '@stoa-hoy' : '@stoa.hoy';
+          slideHtml += `<div class="slide-watermark">${watermarkText}</div>`;
         }
         realNode.innerHTML = slideHtml;
 
@@ -2110,9 +2130,9 @@
         // Seleccionamos el color de fondo y dimensiones para pasárselo a html2canvas
         const isDark = currentCarrusel.slides[i].theme === 'dark';
         const bgColor = isDark ? '#1A1714' : '#F6F2EA';
-        const isYtCTA = currentCarrusel.slides[i].tipo === 'cta-yt';
+        const isYtPlatform = currentPlatform === 'youtube';
         const exportW = 1080;
-        const exportH = isYtCTA ? 1920 : 1350;
+        const exportH = isYtPlatform ? 1920 : 1350;
 
         // CLONAMOS EL NODO para quitarle la transformación de escala antes de la captura
         const clone = realNode.cloneNode(true);
@@ -2122,6 +2142,11 @@
         clone.style.left = "0";
         clone.style.width = exportW + 'px';
         clone.style.height = exportH + 'px';
+        if (isYtPlatform) {
+          clone.style.padding = '120px 96px';
+        } else {
+          clone.style.padding = '100px 96px';
+        }
         
         // Creamos un contenedor oculto para renderizar el clon a tamaño real
         const tempContainer = document.createElement("div");

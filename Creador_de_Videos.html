@@ -491,7 +491,11 @@ async function loadEngine() {
 
     console.log("Transforming with Babel standalone...");
     const startTransform = performance.now();
-    const xformed = window.Babel.transform(code, { presets: ['react'] }).code;
+    const xformed = window.Babel.transform(code, {
+      presets: [
+        ['react', { runtime: 'classic' }]
+      ]
+    }).code;
     console.log(`Transform complete in ${(performance.now() - startTransform).toFixed(1)}ms. Length:`, xformed.length);
 
     console.log("Evaluating transformed code via eval...");

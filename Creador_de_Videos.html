@@ -482,19 +482,39 @@ function scheduleRebuild() {
 // ═══════════════════════════════════════════════════════════════════════════
 
 async function loadEngine() {
+  console.log("loadEngine started");
   document.getElementById('loadOv').classList.add('vis');
   try {
+    console.log("Fetching ./animations.jsx...");
     const code = await fetch('./animations.jsx').then(r => r.text());
+    console.log("Fetched animations.jsx, length:", code.length);
+
+    console.log("Transforming with Babel standalone...");
+    const startTransform = performance.now();
     const xformed = window.Babel.transform(code, { presets: ['react'] }).code;
+    console.log(`Transform complete in ${(performance.now() - startTransform).toFixed(1)}ms. Length:`, xformed.length);
+
     const script = document.createElement('script');
     script.textContent = xformed;
+    console.log("Appending script to document head...");
     document.head.appendChild(script);
+    console.log("Script appended.");
+
     // Poll for Stage
+    console.log("Polling for Stage and useTime on window...");
     await new Promise((res, rej) => {
       let n = 0;
       const t = setInterval(() => {
-        if (window.Stage && window.useTime && window.interpolate) { clearInterval(t); res(); }
-        if (++n > 80) { clearInterval(t); rej(new Error('Stage timeout')); }
+        if (window.Stage && window.useTime && window.interpolate) {
+          console.log(`Polling succeeded after ${n * 100}ms! Stage defined:`, !!window.Stage);
+          clearInterval(t);
+          res();
+        }
+        if (++n > 300) {
+          console.error("Polling timeout! window.Stage:", typeof window.Stage, "window.useTime:", typeof window.useTime);
+          clearInterval(t);
+          rej(new Error('Stage timeout'));
+        }
       }, 100);
     });
     // Mount React root

@@ -747,13 +747,13 @@ async function startRecording(platform) {
   // Lazy-load html-to-image
   if (!window.htmlToImage) {
     try {
-      await loadScript('https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js');
+      await loadScript('./html-to-image.js');
     } catch(e) { alert('Error cargando html-to-image.'); setRecStatus('idle',null); return; }
   }
   // Lazy-load WebMMuxer
   if (!window.WebMMuxer) {
     try {
-      await loadScript('https://cdn.jsdelivr.net/npm/webm-muxer@5/build/webm-muxer.js');
+      await loadScript('./webm-muxer.js');
     } catch(e) { alert('Error cargando WebMMuxer.'); setRecStatus('idle',null); return; }
   }
 

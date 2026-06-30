@@ -494,11 +494,11 @@ async function loadEngine() {
     const xformed = window.Babel.transform(code, { presets: ['react'] }).code;
     console.log(`Transform complete in ${(performance.now() - startTransform).toFixed(1)}ms. Length:`, xformed.length);
 
-    const script = document.createElement('script');
-    script.textContent = xformed;
-    console.log("Appending script to document head...");
-    document.head.appendChild(script);
-    console.log("Script appended.");
+    console.log("Evaluating transformed code via eval...");
+    window.React = React;
+    window.ReactDOM = ReactDOM;
+    eval(xformed);
+    console.log("Eval complete!");
 
     // Poll for Stage
     console.log("Polling for Stage and useTime on window...");

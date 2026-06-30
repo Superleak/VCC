@@ -731,7 +731,7 @@ function rebuildAnimation() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// RECORDING — WebCodecs + html-to-image + WebMMuxer
+// RECORDING — WebCodecs + html-to-image + Mp4Muxer
 // ═══════════════════════════════════════════════════════════════════════════
 
 async function startRecording(platform) {
@@ -740,7 +740,7 @@ async function startRecording(platform) {
   if (!engineReady) { alert('La animación todavía no ha cargado.'); return; }
 
   const slug = (currentVideo.meta.tema||'reel').replace(/\s+/g,'-').replace(/[^\w-]/g,'').toLowerCase();
-  const filename = platform==='ig' ? `stoa-hoy-ig-${slug}.webm` : `stoa-hoy-yt-${slug}.webm`;
+  const filename = platform==='ig' ? `stoa-hoy-ig-${slug}.mp4` : `stoa-hoy-yt-${slug}.mp4`;
 
   setRecStatus('loading', platform);
 
@@ -750,11 +750,11 @@ async function startRecording(platform) {
       await loadScript('./html-to-image.js');
     } catch(e) { alert('Error cargando html-to-image.'); setRecStatus('idle',null); return; }
   }
-  // Lazy-load WebMMuxer
-  if (!window.WebMMuxer) {
+  // Lazy-load Mp4Muxer
+  if (!window.Mp4Muxer) {
     try {
-      await loadScript('./webm-muxer.js');
-    } catch(e) { alert('Error cargando WebMMuxer.'); setRecStatus('idle',null); return; }
+      await loadScript('./mp4-muxer.js');
+    } catch(e) { alert('Error cargando Mp4Muxer.'); setRecStatus('idle',null); return; }
   }
 
   // Wait for stage controls
@@ -797,11 +797,26 @@ async function startRecording(platform) {
   setRecStatus('recording', platform);
 
   const FPS=24, DUR=46, totalF=Math.ceil(DUR*FPS);
-  const {Muxer,ArrayBufferTarget}=window.WebMMuxer;
+  const {Muxer,ArrayBufferTarget}=window.Mp4Muxer;
   const muxTarget=new ArrayBufferTarget();
-  const muxer=new Muxer({target:muxTarget,video:{codec:'V_VP9',width:1080,height:1920,frameRate:FPS},firstTimestampBehavior:'offset'});
+  const muxer=new Muxer({
+    target:muxTarget,
+    video:{
+      codec:'avc',
+      width:1080,
+      height:1920
+    },
+    fastStart:'in-memory'
+  });
   const enc=new VideoEncoder({output:(c,m)=>muxer.addVideoChunk(c,m),error:e=>console.error(e)});
-  enc.configure({codec:'vp09.00.10.08',width:1080,height:1920,bitrate:14_000_000,framerate:FPS,latencyMode:'quality'});
+  enc.configure({
+    codec:'avc1.4d0034',
+    width:1080,
+    height:1920,
+    bitrate:14_000_000,
+    framerate:FPS,
+    avc:{format:'avc'}
+  });
 
   for(let i=0;i<totalF;i++) {
     ctrl.setTime(i/FPS);
@@ -821,7 +836,7 @@ async function startRecording(platform) {
   setRecStatus('encoding', platform);
   await enc.flush(); enc.close(); muxer.finalize();
 
-  const blob=new Blob([muxTarget.buffer],{type:'video/webm'});
+  const blob=new Blob([muxTarget.buffer],{type:'video/mp4'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=filename;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);

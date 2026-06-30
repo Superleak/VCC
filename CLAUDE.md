@@ -24,18 +24,18 @@ Cada video que se cree debe seguir el patrón de **Video - La Reserva del Filós
 - Botones pegados al fondo del panel izquierdo: `position:fixed; left:0; bottom:0; width:340px; z-index:10` con gradiente `linear-gradient(to top, #0E0D0B 70%, transparent)`
 - Panel derecho: `margin-left:340px; padding:32px 36px 32px 28px; display:flex; flex-direction:column; gap:28px; min-height:100vh`
 
-### Botones de grabación WebM (frame a frame)
+### Botones de grabación MP4 (frame a frame)
 
 Siempre dos botones: uno para **Instagram** (9:16 · 1080×1920) y otro para **YouTube Shorts** (9:16 · 1080×1920). El slide final (CTA) cambia según `window.__stoaPlatform`:
 - `'ig'` → tarjetas "Guarda este video" + "Sígueme @Stoa.Hoy"
 - `'yt'` → pantalla SUSCRÍBETE grande
 
-La lógica de grabación es siempre la misma (copiar de La Reserva o El Resultado):
-- Carga `html-to-image` + `webm-muxer` desde CDN
+La lógica de grabación es siempre la misma:
+- Carga `html-to-image` + `mp4-muxer` locales
 - Busca el Stage div (1080×1920) en el DOM
 - Fija `window.__stoaPlatform` antes de grabar
-- Captura frame a frame a 24fps con WebCodecs + VP9
-- Descarga como `.webm`
+- Captura frame a frame a 24fps con WebCodecs + H.264 (AVC)
+- Descarga como `.mp4`
 
 ### Duración de videos
 
